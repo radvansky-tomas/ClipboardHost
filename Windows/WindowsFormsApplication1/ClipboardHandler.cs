@@ -224,10 +224,9 @@ namespace ClipboardHost
                     }
                 }
 
-                if (!String.IsNullOrEmpty(data))
-                {
+              
                     saveToClipboard(data);
-                }
+                
             }
             else
             {
@@ -237,26 +236,29 @@ namespace ClipboardHost
 
         private void saveToClipboard(String data)
         {
-            try
+
+            Thread thread = new Thread(() =>
             {
-                Thread thread = new Thread(() =>
+                try
                 {
-                    if (Properties.Settings.Default.Mode)
+                    if (!String.IsNullOrEmpty(data))
                     {
-                        System.Media.SystemSounds.Beep.Play();
+                        if (Properties.Settings.Default.Mode)
+                        {
+                            System.Media.SystemSounds.Beep.Play();
+                        }
+                        Clipboard.SetText(data.Replace("\n", "\r\n"));
                     }
-                    Clipboard.SetText(data.Replace("\n", "\r\n"));
-                });
-                thread.SetApartmentState(ApartmentState.STA); //Set the thread to STA
-                thread.Start();
-                thread.Join();
-            }
-            catch(Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            });
+            thread.SetApartmentState(ApartmentState.STA); //Set the thread to STA
+            thread.Start();
+            thread.Join();
         }
-        
 
         private ICommandResult ExecuteCmd(string command,Device device)
         {
