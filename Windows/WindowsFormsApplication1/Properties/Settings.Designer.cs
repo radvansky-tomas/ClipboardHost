@@ -25,10 +25,10 @@ namespace ClipboardHost.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool Mode {
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int Mode {
             get {
-                return ((bool)(this["Mode"]));
+                return ((int)(this["Mode"]));
             }
             set {
                 this["Mode"] = value;

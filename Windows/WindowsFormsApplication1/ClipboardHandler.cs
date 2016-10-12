@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 using Managed.Adb;
 using Managed.Adb.IO;
 using Managed.Adb.Logs;
-
+using WindowsInput;
 
 namespace ClipboardHost
 {
@@ -62,6 +62,15 @@ namespace ClipboardHost
             //get free port
             localPort = ClipboardHandler.FreeTcpPort();
             ExecuteCmd("am start -W -n \"com.radvansky.clipboard/.MainActivity\" --ei hostPort " + localPort, device).PropertyChanged += cmdExecuted;
+        }
+
+        public bool isAlive()
+        {
+            if (client != null)
+            {
+                return client.Connected;
+            }
+            return false;
         }
 
         private void cmdExecuted(Object sender, PropertyChangedEventArgs ev)
@@ -183,7 +192,7 @@ namespace ClipboardHost
             {
                 sendMsg("ack");
               
-                if (!Properties.Settings.Default.Mode)
+                if (Properties.Settings.Default.Mode==1)
                 {
                     //Show baloon
                     if (icon != null)
@@ -224,9 +233,18 @@ namespace ClipboardHost
                     }
                 }
 
-              
-                    saveToClipboard(data);
-                
+                if (data.Contains("e265o00lgI"))
+                {
+                    saveToClipboard(data.Replace("e265o00lgI", ""),false);
+                }
+                else if (data.Contains("0BrvGy1AFC"))
+                {
+                    saveToClipboard(data.Replace("0BrvGy1AFC", ""), true);
+                }
+                else
+                {
+                    Console.WriteLine(data);
+                }
             }
             else
             {
@@ -234,7 +252,7 @@ namespace ClipboardHost
             }
         }
 
-        private void saveToClipboard(String data)
+        private void saveToClipboard(String data, bool paste)
         {
 
             Thread thread = new Thread(() =>
@@ -243,11 +261,16 @@ namespace ClipboardHost
                 {
                     if (!String.IsNullOrEmpty(data))
                     {
-                        if (Properties.Settings.Default.Mode)
+                        if (Properties.Settings.Default.Mode!=1)
                         {
                             System.Media.SystemSounds.Beep.Play();
                         }
                         Clipboard.SetText(data.Replace("\n", "\r\n"));
+                        if (paste)
+                        {
+                            //Paste
+                            InputSimulator.SimulateModifiedKeyStroke(VirtualKeyCode.CONTROL, new[] { VirtualKeyCode.VK_V });
+                        }
                     }
                 }
                 catch (Exception ex)

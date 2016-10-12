@@ -76,3 +76,6 @@ C:\Users\Tomasko\Documents\ClipboardHost\Windows\WindowsFormsApplication1\obj\De
 C:\Users\Tomasko\Documents\ClipboardHost\Windows\WindowsFormsApplication1\obj\Debug\ClipboardHost.csproj.GenerateResource.Cache
 C:\Users\Tomasko\Documents\ClipboardHost\Windows\WindowsFormsApplication1\obj\Debug\ClipboardHost.exe.manifest
 C:\Users\Tomasko\Documents\ClipboardHost\Windows\WindowsFormsApplication1\obj\Debug\ClipboardHost.application
+C:\Users\Tomasko\Documents\ClipboardHost\Windows\WindowsFormsApplication1\bin\Debug\InputSimulator.dll
+C:\Users\Tomasko\Documents\ClipboardHost\Windows\WindowsFormsApplication1\bin\Debug\InputSimulator.pdb
+C:\Users\Tomasko\Documents\ClipboardHost\Windows\WindowsFormsApplication1\bin\Debug\InputSimulator.xml

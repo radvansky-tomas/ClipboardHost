@@ -24,16 +24,20 @@ namespace ClipboardHost
         {
             InitializeComponent();
             //Check mode
-            if (Properties.Settings.Default.Mode == true)
+            ((ToolStripMenuItem)silentToolStripMenuItem).Checked = false;
+            ((ToolStripMenuItem)normalToolStripMenuItem).Checked = false;
+            switch (Properties.Settings.Default.Mode)
             {
-                //is silent
-                ((ToolStripMenuItem)silentToolStripMenuItem).Checked = true;
-                ((ToolStripMenuItem)normalToolStripMenuItem).Checked = false;
-            }
-            else
-            {
-                ((ToolStripMenuItem)silentToolStripMenuItem).Checked = false;
-                ((ToolStripMenuItem)normalToolStripMenuItem).Checked = true;
+                case 0:
+                    {
+                        ((ToolStripMenuItem)silentToolStripMenuItem).Checked = true;
+                    }
+                    break;
+                case 1:
+                    {
+                        ((ToolStripMenuItem)normalToolStripMenuItem).Checked = true;
+                    }
+                    break;
             }
             AndroidDebugBridge.Initialize(true);
             AndroidDebugBridge.CreateBridge("adb/adb.exe", true);
@@ -72,38 +76,9 @@ namespace ClipboardHost
 
                 foreach (ClipboardHandler existingSockets in onlineDevices)
                 {
-                    IPEndPoint existingEndpont = existingSockets.getEndpoint();
-                    if (existingEndpont != null)
+                   if (existingSockets.isAlive())
                     {
-                        //Is it still online?!
-                        bool stillOnline = false;
-                        foreach (IZeroconfHost device in result)
-                        {
-                            IPEndPoint iep = new IPEndPoint(IPAddress.Parse(device.IPAddress), device.Services.First().Value.Port);
-                            if (ClipboardHandler.AreEqualIPE(existingEndpont, iep))
-                            {
-                                stillOnline = true;
-                                break;
-                            }
-                        }
-
-                        //ADB
-                        foreach (Device device in adbResult)
-                        {
-                            if (existingSockets.device != null)
-                            {
-                                if (device.SerialNumber == existingSockets.device.SerialNumber)
-                                {
-                                    stillOnline = true;
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (stillOnline)
-                        {
-                            newOnlineDevices.Add(existingSockets);
-                        }
+                        newOnlineDevices.Add(existingSockets);
                     }
                 }
 
@@ -129,7 +104,7 @@ namespace ClipboardHost
                     if (!exists)
                     {
                         //So this is new device
-                        Console.WriteLine("Connecting to device:" + device.SerialNumber);
+                        Console.WriteLine("Connecting to adb device:" + device.SerialNumber);
                         ClipboardHandler handler = new ClipboardHandler(device,notifyIcon1);
                         onlineDevices.Add(handler);
                     }
@@ -160,7 +135,7 @@ namespace ClipboardHost
                             if (IPAddress.TryParse(device.IPAddress, out ip) == true)
                             {
 
-                                Console.WriteLine("Connecting to device: " + device.IPAddress + ":" + device.Services.First().Value.Port);
+                                Console.WriteLine("Connecting to new device: " + device.IPAddress + ":" + device.Services.First().Value.Port);
                                 ClipboardHandler handler = new ClipboardHandler(device.IPAddress, device.Services.First().Value.Port, notifyIcon1);
                                 onlineDevices.Add(handler);
                             }
@@ -182,7 +157,7 @@ namespace ClipboardHost
         {
             if (((ToolStripMenuItem)normalToolStripMenuItem).Checked)
             {
-                Properties.Settings.Default.Mode = false;
+                Properties.Settings.Default.Mode = 1;
                 Properties.Settings.Default.Save();
                 ((ToolStripMenuItem)silentToolStripMenuItem).Checked = false;
             }
@@ -192,10 +167,11 @@ namespace ClipboardHost
         {
             if (((ToolStripMenuItem)silentToolStripMenuItem).Checked)
             {
-                Properties.Settings.Default.Mode = true;
+                Properties.Settings.Default.Mode = 0;
                 Properties.Settings.Default.Save();
                 ((ToolStripMenuItem)normalToolStripMenuItem).Checked = false;
             }
         }
+        
     }
 }

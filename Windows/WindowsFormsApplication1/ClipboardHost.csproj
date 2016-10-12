@@ -65,6 +65,9 @@
       <HintPath>..\packages\Camalot.Common.1.0.5937.17275\lib\net45\Camalot.Common.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="InputSimulator">
+      <HintPath>..\..\..\..\Downloads\InputSimulator.0.1.0.0-bin\InputSimulator.0.1.0.0-bin\Release\InputSimulator.dll</HintPath>
+    </Reference>
     <Reference Include="Managed.Adb, Version=2.0.0.0, Culture=neutral, PublicKeyToken=ed3761c9cde2a680, processorArchitecture=x86">
       <HintPath>..\packages\Managed.Adb.2.0.131.13916\lib\net45\Managed.Adb.dll</HintPath>
       <Private>True</Private>
