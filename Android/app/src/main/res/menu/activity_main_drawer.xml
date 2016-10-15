@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single" android:id="@+id/group_actions">
+        <item
+            android:id="@+id/nav_new_file"
+            android:title="New File" />
+    </group>
+
+    <group android:checkableBehavior="single" android:id="@+id/group_files">
+        <item
+            android:id="@+id/item_files"
+            android:title="Files">
+        <menu>
+            <item
+                android:title=""/>
+        </menu>
+        </item>
+    </group>
+
+</menu>

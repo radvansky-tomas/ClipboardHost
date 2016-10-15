@@ -34,6 +34,35 @@ public class NetworkService extends Service
 {
     public static final String LOGTAG = NetworkService.class.getName();
 
+    public enum MessageType
+    {
+        NORMAL (1, "e265o00lgI"),
+        PASTE (2, "0BrvGy1AFC");
+
+        public int code;
+        public String name;
+
+        private MessageType(int code, String name) {
+            this.code = code;
+            this.name = name;
+        }
+
+        public static MessageType fromInt(int code) {
+            switch(code) {
+                case 1:
+                    return NORMAL;
+                case 2:
+                    return PASTE;
+            }
+
+            // we had some exception handling for this
+            // as the contract for these was between 2 independent applications
+            // liable to change between versions (mostly adding new stuff)
+            // but keeping it simple here.
+            return null;
+        }
+    }
+
     //Service Discovery
     public int DNS_PORT;
     private MyHTTPD server;
@@ -114,10 +143,11 @@ public class NetworkService extends Service
     };
 
     // call this method to send data to the client socket
-    public void sendData(String message) {
+    public void sendData(MessageType type,String message) {
         try {
-            asyncClient.write(new ByteBufferList(message.getBytes(Charset.forName("UTF-8"))));
-            Log.i(LOGTAG, "Data sent: " + message);
+            String composedMessage = type.name + message;
+            asyncClient.write(new ByteBufferList(composedMessage.getBytes(Charset.forName("UTF-8"))));
+            Log.i(LOGTAG, "Data sent: " + composedMessage);
         }
         catch (Exception ex)
         {
