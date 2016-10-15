@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "ClipboardHost"
-#define MyAppVersion "1.7"
+#define MyAppVersion "2.0"
 #define MyAppPublisher "Tomas Radvansky"
 #define MyAppURL "https://github.com/radvansky-tomas"
 #define MyAppExeName "ClipboardHost.exe"
@@ -34,36 +34,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 0,6.1
 
 [Files]
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\ClipboardHost.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\Camalot.Common.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\ClipboardHost.application"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\ClipboardHost.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\ClipboardHost.exe.config"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\ClipboardHost.exe.manifest"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\ClipboardHost.pdb"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\ClipboardHost.vshost.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\Managed.Adb.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\Managed.Adb.pdb"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\Managed.Adb.xml"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\Mono.Posix.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\MoreLinq.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\MoreLinq.xml"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\Newtonsoft.Json.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\Newtonsoft.Json.xml"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\System.Reactive.Core.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\System.Reactive.Core.xml"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\System.Reactive.Interfaces.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\System.Reactive.Interfaces.xml"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\System.Reactive.Linq.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\System.Reactive.Linq.xml"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\System.Reactive.PlatformServices.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\System.Reactive.PlatformServices.xml"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\System.Reactive.Windows.Threading.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\System.Reactive.Windows.Threading.xml"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\System.Runtime.InteropServices.RuntimeInformation.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\Zeroconf.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\Zeroconf.pdb"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\Tomasko\Documents\Visual Studio 2015\Projects\WindowsFormsApplication1\WindowsFormsApplication1\bin\Release\Zeroconf.xml"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\bin\Release\*"; DestDir: "{app}"; Flags: ignoreversion
 Source: "..\bin\Release\adb\adb.exe"; DestDir: "{app}\adb"; Flags: onlyifdoesntexist
 Source: "..\bin\Release\adb\AdbWinApi.dll"; DestDir: "{app}\adb"; Flags: onlyifdoesntexist
 Source: "..\bin\Release\adb\AdbWinUsbApi.dll"; DestDir: "{app}\adb"; Flags: onlyifdoesntexist

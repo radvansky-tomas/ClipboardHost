@@ -61,7 +61,19 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>u0RdKtoVw2XStNY3lYnA5IeDETwgkUffkUXg6UmyXZE=</dsig:DigestValue>
+        <dsig:DigestValue>hyoByoLyE2CZxAZ4DNO+Jkm3YghOyO3MUF+8G8sxBWY=</dsig:DigestValue>
+      </hash>
+    </dependentAssembly>
+  </dependency>
+  <dependency>
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="InputSimulator.dll" size="13824">
+      <assemblyIdentity name="InputSimulator" version="0.1.0.0" language="neutral" processorArchitecture="msil" />
+      <hash>
+        <dsig:Transforms>
+          <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+        </dsig:Transforms>
+        <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+        <dsig:DigestValue>GhCRFYJ+zUE7l4hyxlYoVyEC/pk94t/zpgvHO9fEJxg=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -224,13 +236,13 @@
       <dsig:DigestValue>BBxoWbtPx406kD3ZASmM0ez7dba+Bka3SVTNciKApAc=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="ClipboardHost.exe.config" size="1494">
+  <file name="ClipboardHost.exe.config" size="1491">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>WgHSBnBqd4gdcOpPrP7ogfv3ZVQlH4So62I//Ty8xe8=</dsig:DigestValue>
+      <dsig:DigestValue>28Fv8sqLt9f00AWs1AYTTGfpQpf8vja4nWl95+u5kJY=</dsig:DigestValue>
     </hash>
   </file>
 </asmv1:assembly>
