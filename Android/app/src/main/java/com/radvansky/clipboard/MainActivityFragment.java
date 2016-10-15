@@ -125,7 +125,7 @@ public class MainActivityFragment extends Fragment {
         copyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(clipText.getSelectionStart()>0 && clipText.getSelectionEnd()>0)
+                if(clipText.getSelectionStart()>=0 && clipText.getSelectionEnd()>0)
                 {
                     String selectedText = clipText.getText().subSequence(clipText.getSelectionStart(),clipText.getSelectionEnd()).toString();
                     Log.e("paragraph",selectedText);
@@ -211,7 +211,7 @@ public class MainActivityFragment extends Fragment {
 
     private void replaceSearch()
     {
-        if(clipText.getSelectionStart()>0 && clipText.getSelectionEnd()>0) {
+        if(clipText.getSelectionStart()>=0 && clipText.getSelectionEnd()>0) {
             String selectedText = clipText.getText().subSequence(clipText.getSelectionStart(), clipText.getSelectionEnd()).toString();
 
             new MaterialDialog.Builder(getActivity())
@@ -314,7 +314,7 @@ public class MainActivityFragment extends Fragment {
                     first = first + 1;
                 }
                 first = clipText.getText().toString().indexOf("\n\n", first);
-                if (first <= cursor) {
+                if (first <= cursor && first>0) {
                     oldFirst = first;
                 }
             }
@@ -324,7 +324,7 @@ public class MainActivityFragment extends Fragment {
                     first = first + 1;
                 }
                 first = clipText.getText().toString().indexOf("\n\n", first);
-                if (first <= clipText.getText().length()) {
+                if (first <= clipText.getText().length() && first>0) {
                     oldFirst = first;
                 }
             }
@@ -361,6 +361,7 @@ public class MainActivityFragment extends Fragment {
                         } else {
                             clipText.setSelection(start + 2, end);
                         }
+                        sendSelectedText();
                     }
                 });
             } else {
@@ -370,11 +371,17 @@ public class MainActivityFragment extends Fragment {
                         clipText.requestFocus();
                         clipText.setSelection(0);
                         clipText.setSelection(start, clipText.getText().length());
+                        sendSelectedText();
                     }
                 });
             }
         }
-        if(clipText.getSelectionStart()>0 && clipText.getSelectionEnd()>0)
+
+    }
+
+    private void sendSelectedText()
+    {
+        if(clipText.getSelectionStart()>=0 && clipText.getSelectionEnd()>0)
         {
             String selectedText = clipText.getText().subSequence(clipText.getSelectionStart(),clipText.getSelectionEnd()).toString();
             Log.e("paragraph",selectedText);
