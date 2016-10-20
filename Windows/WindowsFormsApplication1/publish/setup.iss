@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "ClipboardHost"
-#define MyAppVersion "2.0"
+#define MyAppVersion "2.1"
 #define MyAppPublisher "Tomas Radvansky"
 #define MyAppURL "https://github.com/radvansky-tomas"
 #define MyAppExeName "ClipboardHost.exe"

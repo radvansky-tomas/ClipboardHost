@@ -252,7 +252,7 @@ namespace ClipboardHost
             }
         }
 
-        private void saveToClipboard(String data, bool paste)
+        private void saveToClipboard(String data, bool enter)
         {
 
             Thread thread = new Thread(() =>
@@ -266,10 +266,14 @@ namespace ClipboardHost
                             System.Media.SystemSounds.Beep.Play();
                         }
                         Clipboard.SetText(data.Replace("\n", "\r\n"));
-                        if (paste)
+                        //Paste
+                        InputSimulator.SimulateModifiedKeyStroke(VirtualKeyCode.CONTROL, new[] { VirtualKeyCode.VK_V });
+
+                        if (enter)
                         {
-                            //Paste
-                            InputSimulator.SimulateModifiedKeyStroke(VirtualKeyCode.CONTROL, new[] { VirtualKeyCode.VK_V });
+                            //Return
+                            InputSimulator.SimulateKeyPress(VirtualKeyCode.RETURN);
+
                         }
                     }
                 }
