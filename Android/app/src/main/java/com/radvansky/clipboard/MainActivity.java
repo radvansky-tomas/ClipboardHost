@@ -1,9 +1,13 @@
 package com.radvansky.clipboard;
 
+import android.app.Activity;
+import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -23,11 +27,14 @@ import android.widget.Toast;
 
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.FontAwesomeIcons;
+import com.nononsenseapps.filepicker.FilePickerActivity;
+import com.orhanobut.hawk.Hawk;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements TCPStatusListener,NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements TCPStatusListener, NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawer;
     NetworkService mNetworkService;
     private Handler handler = new Handler();
@@ -44,8 +51,9 @@ public class MainActivity extends AppCompatActivity implements TCPStatusListener
     @Override
     protected void onStop() {
         super.onStop();
-       // unbindService(mConnection);
+        // unbindService(mConnection);
     }
+
     ServiceConnection mConnection = new ServiceConnection() {
         public void onServiceDisconnected(ComponentName name) {
             mNetworkService.setmListener(null);
@@ -67,7 +75,7 @@ public class MainActivity extends AppCompatActivity implements TCPStatusListener
     @Override
     public void TCPStatusChanged(final boolean isOnline) {
         isServiceOnline = isOnline;
-        Log.d(TAG,"Status changed:" + isOnline);
+        Log.d(TAG, "Status changed:" + isOnline);
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -104,11 +112,9 @@ public class MainActivity extends AppCompatActivity implements TCPStatusListener
                 //Check online status
                 filesMenu.clear();
                 List<File> currentFiles = Helpers.getListFiles(MainActivity.this.getFilesDir());
-                if (currentFiles.size() == 0)
-                {
+                if (currentFiles.size() == 0) {
                     filesMenu.add("");
-                }
-                else {
+                } else {
                     for (File entry : currentFiles) {
                         filesMenu.add(entry.getName());
                     }
@@ -131,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements TCPStatusListener
             @Override
             public void onClick(View view) {
 
-                  Toast.makeText(MainActivity.this, new MyClipboardManager().readFromClipboard(MainActivity.this), Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, new MyClipboardManager().readFromClipboard(MainActivity.this), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -140,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements TCPStatusListener
             @Override
             public void onClick(View view) {
                 if (isServiceOnline) {
-                    mNetworkService.sendData(NetworkService.MessageType.NORMAL,new MyClipboardManager().readFromClipboard(MainActivity.this));
+                    mNetworkService.sendData(NetworkService.MessageType.NORMAL, new MyClipboardManager().readFromClipboard(MainActivity.this));
                     Toast.makeText(MainActivity.this, "Clipboard data has been sent...", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(MainActivity.this, "Host is not connected!", Toast.LENGTH_SHORT).show();
@@ -153,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements TCPStatusListener
             @Override
             public void onClick(View view) {
                 if (isServiceOnline) {
-                    mNetworkService.sendData(NetworkService.MessageType.PASTE,new MyClipboardManager().readFromClipboard(MainActivity.this));
+                    mNetworkService.sendData(NetworkService.MessageType.PASTE, new MyClipboardManager().readFromClipboard(MainActivity.this));
                     Toast.makeText(MainActivity.this, "Clipboard data has been pasted...", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(MainActivity.this, "Host is not connected!", Toast.LENGTH_SHORT).show();
@@ -179,13 +185,10 @@ public class MainActivity extends AppCompatActivity implements TCPStatusListener
         int id = item.getItemId();
         MainActivityFragment fragment = (MainActivityFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
 
-        if (id == R.id.nav_new_file)
-        {
+        if (id == R.id.nav_new_file) {
             //Create new file
             fragment.createNewFile();
-        }
-        else
-        {
+        } else {
             //Open file
             fragment.openFile(item.getTitle().toString());
         }
@@ -201,6 +204,7 @@ public class MainActivity extends AppCompatActivity implements TCPStatusListener
         statusMenu = menu.findItem(R.id.action_status);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         return false;
@@ -212,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements TCPStatusListener
         super.onResume();
         Intent mIntent = new Intent(this, NetworkService.class);
         bindService(mIntent, mConnection, BIND_AUTO_CREATE);
-        if (mNetworkService!=null) {
+        if (mNetworkService != null) {
             Intent currentIntent = getIntent();
             int portValue = currentIntent.getIntExtra("hostPort", -1);
             if (portValue == -1) {
@@ -228,4 +232,71 @@ public class MainActivity extends AppCompatActivity implements TCPStatusListener
         Log.d(TAG, "onPause");
         super.onPause();
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
+            if (data.getBooleanExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false)) {
+                // For JellyBean and above
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    ClipData clip = data.getClipData();
+
+                    if (clip != null) {
+                        for (int i = 0; i < clip.getItemCount(); i++) {
+                            Uri uri = clip.getItemAt(i).getUri();
+                            // Do something with the URI
+                        }
+                    }
+                    // For Ice Cream Sandwich
+                } else {
+                    ArrayList<String> paths = data.getStringArrayListExtra
+                            (FilePickerActivity.EXTRA_PATHS);
+
+                    if (paths != null) {
+                        for (String path : paths) {
+                            Uri uri = Uri.parse(path);
+                            // Do something with the URI
+                        }
+                    }
+                }
+
+            } else {
+                Uri uri = data.getData();
+                // Do something with the URI
+                mNetworkService.sendFile(uri.getPath());
+            }
+        } else if (requestCode == 200 && resultCode == Activity.RESULT_OK) {
+            if (data.getBooleanExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false)) {
+                // For JellyBean and above
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    ClipData clip = data.getClipData();
+
+                    if (clip != null) {
+                        for (int i = 0; i < clip.getItemCount(); i++) {
+                            Uri uri = clip.getItemAt(i).getUri();
+                            // Do something with the URI
+                        }
+                    }
+                    // For Ice Cream Sandwich
+                } else {
+                    ArrayList<String> paths = data.getStringArrayListExtra
+                            (FilePickerActivity.EXTRA_PATHS);
+
+                    if (paths != null) {
+                        for (String path : paths) {
+                            Uri uri = Uri.parse(path);
+                            // Do something with the URI
+                        }
+                    }
+                }
+
+            } else {
+                Uri uri = data.getData();
+                // Do something with the URI
+                Hawk.put("DefaultPath",uri.getPath());
+            }
+        }
+    }
 }
+

@@ -23,4 +23,12 @@
         android:title="Delete"
         app:showAsAction="never">
     </item>
+    <item android:id="@+id/action_file"
+        android:title="Send File"
+        app:showAsAction="never">
+    </item>
+    <item android:id="@+id/action_dir"
+        android:title="Receive Directory"
+        app:showAsAction="never">
+    </item>
 </menu>
