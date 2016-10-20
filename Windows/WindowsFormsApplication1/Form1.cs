@@ -149,6 +149,16 @@ namespace ClipboardHost
                     }
                 }
 
+                if (onlineDevices.Count > 0)
+                {
+                    onlineIcon.Visible = true;
+                    offlineIcon.Visible = false;
+                }
+                else
+                {
+                    onlineIcon.Visible = false;
+                    offlineIcon.Visible = true;
+                }
                     Thread.Sleep(2000);
             }
         }

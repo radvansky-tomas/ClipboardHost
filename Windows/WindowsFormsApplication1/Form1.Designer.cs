@@ -37,6 +37,8 @@
             this.normalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.onlineIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.offlineIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -50,11 +52,12 @@
             // 
             // contextMenuStrip1
             // 
+            this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.modeToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(153, 70);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(179, 80);
             // 
             // modeToolStripMenuItem
             // 
@@ -62,14 +65,14 @@
             this.silentToolStripMenuItem,
             this.normalToolStripMenuItem});
             this.modeToolStripMenuItem.Name = "modeToolStripMenuItem";
-            this.modeToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.modeToolStripMenuItem.Size = new System.Drawing.Size(178, 38);
             this.modeToolStripMenuItem.Text = "Mode";
             // 
             // silentToolStripMenuItem
             // 
             this.silentToolStripMenuItem.CheckOnClick = true;
             this.silentToolStripMenuItem.Name = "silentToolStripMenuItem";
-            this.silentToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.silentToolStripMenuItem.Size = new System.Drawing.Size(194, 38);
             this.silentToolStripMenuItem.Text = "Silent";
             this.silentToolStripMenuItem.CheckedChanged += new System.EventHandler(this.silentToolStripMenuItem_CheckedChanged);
             // 
@@ -77,14 +80,14 @@
             // 
             this.normalToolStripMenuItem.CheckOnClick = true;
             this.normalToolStripMenuItem.Name = "normalToolStripMenuItem";
-            this.normalToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.normalToolStripMenuItem.Size = new System.Drawing.Size(194, 38);
             this.normalToolStripMenuItem.Text = "Normal";
             this.normalToolStripMenuItem.CheckedChanged += new System.EventHandler(this.normalToolStripMenuItem_CheckedChanged);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(178, 38);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -92,11 +95,22 @@
             // 
             this.backgroundWorker1.DoWork += new System.ComponentModel.DoWorkEventHandler(this.backgroundWorker1_DoWork);
             // 
+            // onlineIcon
+            // 
+            this.onlineIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("onlineIcon.Icon")));
+            this.onlineIcon.Text = "Online";
+            // 
+            // offlineIcon
+            // 
+            this.offlineIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("offlineIcon.Icon")));
+            this.offlineIcon.Text = "Online";
+            // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 261);
+            this.ClientSize = new System.Drawing.Size(568, 502);
+            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Form1";
@@ -120,6 +134,8 @@
         private System.Windows.Forms.ToolStripMenuItem modeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem silentToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem normalToolStripMenuItem;
+        private System.Windows.Forms.NotifyIcon onlineIcon;
+        private System.Windows.Forms.NotifyIcon offlineIcon;
     }
 }
 
