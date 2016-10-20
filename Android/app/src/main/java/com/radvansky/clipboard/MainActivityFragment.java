@@ -1,7 +1,9 @@
 package com.radvansky.clipboard;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -22,7 +24,10 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.nononsenseapps.filepicker.FilePickerActivity;
+import com.orhanobut.hawk.Hawk;
 
+import java.io.Console;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -125,7 +130,7 @@ public class MainActivityFragment extends Fragment {
         copyBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(clipText.getSelectionStart()>0 && clipText.getSelectionEnd()>0)
+                if(clipText.getSelectionStart()>=0 && clipText.getSelectionEnd()>0)
                 {
                     String selectedText = clipText.getText().subSequence(clipText.getSelectionStart(),clipText.getSelectionEnd()).toString();
                     Log.e("paragraph",selectedText);
@@ -211,7 +216,7 @@ public class MainActivityFragment extends Fragment {
 
     private void replaceSearch()
     {
-        if(clipText.getSelectionStart()>0 && clipText.getSelectionEnd()>0) {
+        if(clipText.getSelectionStart()>=0 && clipText.getSelectionEnd()>0) {
             String selectedText = clipText.getText().subSequence(clipText.getSelectionStart(), clipText.getSelectionEnd()).toString();
 
             new MaterialDialog.Builder(getActivity())
@@ -314,7 +319,7 @@ public class MainActivityFragment extends Fragment {
                     first = first + 1;
                 }
                 first = clipText.getText().toString().indexOf("\n\n", first);
-                if (first <= cursor) {
+                if (first <= cursor && first>0) {
                     oldFirst = first;
                 }
             }
@@ -324,7 +329,7 @@ public class MainActivityFragment extends Fragment {
                     first = first + 1;
                 }
                 first = clipText.getText().toString().indexOf("\n\n", first);
-                if (first <= clipText.getText().length()) {
+                if (first <= clipText.getText().length() && first>0) {
                     oldFirst = first;
                 }
             }
@@ -361,6 +366,7 @@ public class MainActivityFragment extends Fragment {
                         } else {
                             clipText.setSelection(start + 2, end);
                         }
+                        sendSelectedText();
                     }
                 });
             } else {
@@ -370,11 +376,17 @@ public class MainActivityFragment extends Fragment {
                         clipText.requestFocus();
                         clipText.setSelection(0);
                         clipText.setSelection(start, clipText.getText().length());
+                        sendSelectedText();
                     }
                 });
             }
         }
-        if(clipText.getSelectionStart()>0 && clipText.getSelectionEnd()>0)
+
+    }
+
+    private void sendSelectedText()
+    {
+        if(clipText.getSelectionStart()>=0 && clipText.getSelectionEnd()>0)
         {
             String selectedText = clipText.getText().subSequence(clipText.getSelectionStart(),clipText.getSelectionEnd()).toString();
             Log.e("paragraph",selectedText);
@@ -485,6 +497,50 @@ public class MainActivityFragment extends Fragment {
                             .show();
                 }
                 return  true;
+            }
+
+            case R.id.action_file:;
+            {
+                // This always works
+                Intent i = new Intent(getContext(), FilePickerActivity.class);
+                // This works if you defined the intent filter
+                // Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+
+                // Set these depending on your use case. These are the defaults.
+                i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
+                i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
+                i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
+
+                // Configure initial directory by specifying a String.
+                // You could specify a String like "/storage/emulated/0/", but that can
+                // dangerous. Always use Android's API calls to get paths to the SD-card or
+                // internal memory.
+                i.putExtra(FilePickerActivity.EXTRA_START_PATH, Environment.getExternalStorageDirectory().getPath());
+
+                startActivityForResult(i, 100);
+                return true;
+            }
+
+            case R.id.action_dir:;
+            {
+                // This always works
+                Intent i = new Intent(getContext(), FilePickerActivity.class);
+                // This works if you defined the intent filter
+                // Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+
+                // Set these depending on your use case. These are the defaults.
+                i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
+                i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
+                i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_DIR);
+
+                // Configure initial directory by specifying a String.
+                // You could specify a String like "/storage/emulated/0/", but that can
+                // dangerous. Always use Android's API calls to get paths to the SD-card or
+                // internal memory.
+                i.putExtra(FilePickerActivity.EXTRA_START_PATH, Environment.getExternalStorageDirectory().getPath());
+
+                startActivityForResult(i, 200);
+                return true;
             }
         }
 

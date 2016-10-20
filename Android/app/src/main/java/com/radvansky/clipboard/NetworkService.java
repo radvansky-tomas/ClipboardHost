@@ -19,6 +19,10 @@ import com.koushikdutta.async.callback.CompletedCallback;
 import com.koushikdutta.async.callback.DataCallback;
 import com.koushikdutta.async.callback.ListenCallback;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.nio.charset.Charset;
@@ -37,7 +41,8 @@ public class NetworkService extends Service
     public enum MessageType
     {
         NORMAL (1, "e265o00lgI"),
-        PASTE (2, "0BrvGy1AFC");
+        PASTE (2, "0BrvGy1AFC"),
+        FILE (3, "1EfsEj5RKW");
 
         public int code;
         public String name;
@@ -53,6 +58,8 @@ public class NetworkService extends Service
                     return NORMAL;
                 case 2:
                     return PASTE;
+                case 3:
+                    return FILE;
             }
 
             // we had some exception handling for this
@@ -155,6 +162,33 @@ public class NetworkService extends Service
         }
     }
 
+    public void sendFile(String path) {
+        try {
+            File yourFile = new File(path);
+            if (yourFile.isFile()) {
+                int size = (int) yourFile.length();
+                byte[] bytes = new byte[size];
+                try {
+                    BufferedInputStream buf = new BufferedInputStream(new FileInputStream(yourFile));
+                    buf.read(bytes, 0, bytes.length);
+                    buf.close();
+                    sendData(MessageType.FILE, "filename.exe");
+                    asyncClient.write(new ByteBufferList(bytes));
+                    Log.i(LOGTAG, "File sent: " + path);
+                } catch (FileNotFoundException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+    }
     public void setmListener(TCPStatusListener mListener) {
         this.mListener = mListener;
     }
