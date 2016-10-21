@@ -25,8 +25,10 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.FontAwesomeIcons;
+import com.koushikdutta.async.callback.CompletedCallback;
 import com.nononsenseapps.filepicker.FilePickerActivity;
 import com.orhanobut.hawk.Hawk;
 
@@ -262,40 +264,36 @@ public class MainActivity extends AppCompatActivity implements TCPStatusListener
                 }
 
             } else {
-                Uri uri = data.getData();
+                final Uri uri = data.getData();
                 // Do something with the URI
-                mNetworkService.sendFile(uri.getPath());
+                final MaterialDialog dialog =  new MaterialDialog.Builder(this)
+                        .title("File Upload")
+                        .content("Uploading...")
+                        .progress(true, 0)
+                        .show();
+                mNetworkService.sendFile(uri.getPath(), new CompletedCallback() {
+                    @Override
+                    public void onCompleted(Exception ex) {
+                        dialog.dismiss();
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MainActivity.this, "File: '" + uri.getLastPathSegment() + "' + has been sent", Toast.LENGTH_LONG).show();
+                            }
+                        });
+                      }
+                });
             }
         } else if (requestCode == 200 && resultCode == Activity.RESULT_OK) {
-            if (data.getBooleanExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false)) {
-                // For JellyBean and above
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    ClipData clip = data.getClipData();
-
-                    if (clip != null) {
-                        for (int i = 0; i < clip.getItemCount(); i++) {
-                            Uri uri = clip.getItemAt(i).getUri();
-                            // Do something with the URI
-                        }
-                    }
-                    // For Ice Cream Sandwich
-                } else {
-                    ArrayList<String> paths = data.getStringArrayListExtra
-                            (FilePickerActivity.EXTRA_PATHS);
-
-                    if (paths != null) {
-                        for (String path : paths) {
-                            Uri uri = Uri.parse(path);
-                            // Do something with the URI
-                        }
-                    }
-                }
-
-            } else {
-                Uri uri = data.getData();
+                final Uri uri = data.getData();
                 // Do something with the URI
                 Hawk.put("DefaultPath",uri.getPath());
-            }
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(MainActivity.this, "New Default Directory: '" + uri.getPath() + "'", Toast.LENGTH_LONG).show();
+                    }
+                });
         }
     }
 }

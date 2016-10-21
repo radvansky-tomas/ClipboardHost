@@ -34,5 +34,17 @@ namespace ClipboardHost.Properties {
                 this["Mode"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string Dir {
+            get {
+                return ((string)(this["Dir"]));
+            }
+            set {
+                this["Dir"] = value;
+            }
+        }
     }
 }

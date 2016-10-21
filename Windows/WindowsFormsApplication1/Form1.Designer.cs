@@ -39,6 +39,8 @@
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.onlineIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.offlineIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.changeDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sendFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -55,9 +57,11 @@
             this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.modeToolStripMenuItem,
+            this.sendFileToolStripMenuItem,
+            this.changeDirToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(179, 80);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(270, 200);
             // 
             // modeToolStripMenuItem
             // 
@@ -65,7 +69,7 @@
             this.silentToolStripMenuItem,
             this.normalToolStripMenuItem});
             this.modeToolStripMenuItem.Name = "modeToolStripMenuItem";
-            this.modeToolStripMenuItem.Size = new System.Drawing.Size(178, 38);
+            this.modeToolStripMenuItem.Size = new System.Drawing.Size(269, 38);
             this.modeToolStripMenuItem.Text = "Mode";
             // 
             // silentToolStripMenuItem
@@ -87,7 +91,7 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(178, 38);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(269, 38);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -105,12 +109,26 @@
             this.offlineIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("offlineIcon.Icon")));
             this.offlineIcon.Text = "Online";
             // 
+            // changeDirToolStripMenuItem
+            // 
+            this.changeDirToolStripMenuItem.Name = "changeDirToolStripMenuItem";
+            this.changeDirToolStripMenuItem.Size = new System.Drawing.Size(269, 38);
+            this.changeDirToolStripMenuItem.Text = "Change Dir";
+            this.changeDirToolStripMenuItem.Click += new System.EventHandler(this.changeDirToolStripMenuItem_Click);
+            // 
+            // sendFileToolStripMenuItem
+            // 
+            this.sendFileToolStripMenuItem.Name = "sendFileToolStripMenuItem";
+            this.sendFileToolStripMenuItem.Size = new System.Drawing.Size(269, 38);
+            this.sendFileToolStripMenuItem.Text = "Send File";
+            this.sendFileToolStripMenuItem.Click += new System.EventHandler(this.sendFileToolStripMenuItem_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(568, 502);
-            this.Margin = new System.Windows.Forms.Padding(6, 6, 6, 6);
+            this.Margin = new System.Windows.Forms.Padding(6);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "Form1";
@@ -136,6 +154,8 @@
         private System.Windows.Forms.ToolStripMenuItem normalToolStripMenuItem;
         private System.Windows.Forms.NotifyIcon onlineIcon;
         private System.Windows.Forms.NotifyIcon offlineIcon;
+        private System.Windows.Forms.ToolStripMenuItem sendFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem changeDirToolStripMenuItem;
     }
 }
 

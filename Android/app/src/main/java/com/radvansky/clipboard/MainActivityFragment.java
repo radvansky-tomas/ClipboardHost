@@ -517,7 +517,7 @@ public class MainActivityFragment extends Fragment {
                 // internal memory.
                 i.putExtra(FilePickerActivity.EXTRA_START_PATH, Environment.getExternalStorageDirectory().getPath());
 
-                startActivityForResult(i, 100);
+                getActivity().startActivityForResult(i, 100);
                 return true;
             }
 
@@ -530,7 +530,7 @@ public class MainActivityFragment extends Fragment {
 
                 // Set these depending on your use case. These are the defaults.
                 i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
-                i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
+                i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true);
                 i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_DIR);
 
                 // Configure initial directory by specifying a String.
@@ -539,7 +539,7 @@ public class MainActivityFragment extends Fragment {
                 // internal memory.
                 i.putExtra(FilePickerActivity.EXTRA_START_PATH, Environment.getExternalStorageDirectory().getPath());
 
-                startActivityForResult(i, 200);
+                getActivity().startActivityForResult(i, 200);
                 return true;
             }
         }

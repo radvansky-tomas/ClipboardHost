@@ -19,6 +19,7 @@ namespace ClipboardHost
     public partial class Form1 : Form
     {
         private AdbHelper adbHelper = AdbHelper.Instance;
+        private bool isADBEnabled = false;
 
         public Form1()
         {
@@ -39,8 +40,12 @@ namespace ClipboardHost
                     }
                     break;
             }
-            AndroidDebugBridge.Initialize(true);
-            AndroidDebugBridge.CreateBridge("adb/adb.exe", true);
+
+            if (isADBEnabled)
+            {
+                 AndroidDebugBridge.Initialize(true);
+                 AndroidDebugBridge.CreateBridge("adb/adb.exe", true);
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -50,14 +55,16 @@ namespace ClipboardHost
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            try
+            if (isADBEnabled)
             {
-                //client.Disconnect(true);
-                AdbHelper.Instance.KillAdb(AndroidDebugBridge.SocketAddress);
-            }
-            catch
-            {
+                try
+                {
+                    AdbHelper.Instance.KillAdb(AndroidDebugBridge.SocketAddress);
+                }
+                catch
+                {
 
+                }
             }
             System.Diagnostics.Process.GetCurrentProcess().Kill();
         }
@@ -69,47 +76,49 @@ namespace ClipboardHost
             {
                 IReadOnlyList<IZeroconfHost> result = ZeroconfResolver.ResolveAsync("_jktest._tcp.local.").Result;
                 //ADB
-                var adbResult = AdbHelper.Instance.GetDevices(AndroidDebugBridge.SocketAddress)
+                if (isADBEnabled)
+                {
+                    var adbResult = AdbHelper.Instance.GetDevices(AndroidDebugBridge.SocketAddress)
                   .Where(d => d.IsOnline == true);
 
-                List<ClipboardHandler> newOnlineDevices = new List<ClipboardHandler>();
-
-                foreach (ClipboardHandler existingSockets in onlineDevices)
-                {
-                   if (existingSockets.isAlive())
-                    {
-                        newOnlineDevices.Add(existingSockets);
-                    }
-                }
-
-                onlineDevices = newOnlineDevices;
-
-                //ADB
-                foreach (Device device in adbResult)
-                {
-                    bool exists = false;
+                    List<ClipboardHandler> newOnlineDevices = new List<ClipboardHandler>();
 
                     foreach (ClipboardHandler existingSockets in onlineDevices)
                     {
-                        if (existingSockets.device != null)
+                        if (existingSockets.isAlive())
                         {
-                            if (existingSockets.device.SerialNumber == device.SerialNumber)
-                            {
-                                exists = true;
-                                break;
-                            }
+                            newOnlineDevices.Add(existingSockets);
                         }
                     }
 
-                    if (!exists)
+                    onlineDevices = newOnlineDevices;
+
+                    //ADB
+                    foreach (Device device in adbResult)
                     {
-                        //So this is new device
-                        Console.WriteLine("Connecting to adb device:" + device.SerialNumber);
-                        ClipboardHandler handler = new ClipboardHandler(device,notifyIcon1);
-                        onlineDevices.Add(handler);
+                        bool exists = false;
+
+                        foreach (ClipboardHandler existingSockets in onlineDevices)
+                        {
+                            if (existingSockets.device != null)
+                            {
+                                if (existingSockets.device.SerialNumber == device.SerialNumber)
+                                {
+                                    exists = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (!exists)
+                        {
+                            //So this is new device
+                            Console.WriteLine("Connecting to adb device:" + device.SerialNumber);
+                            ClipboardHandler handler = new ClipboardHandler(device, notifyIcon1);
+                            onlineDevices.Add(handler);
+                        }
                     }
                 }
-
                 //Check for newly added devices
                 foreach (IZeroconfHost device in result)
                 {
@@ -182,6 +191,42 @@ namespace ClipboardHost
                 ((ToolStripMenuItem)normalToolStripMenuItem).Checked = false;
             }
         }
-        
+
+        private void sendFileToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.Title = "File to send";
+            if (String.IsNullOrEmpty(Properties.Settings.Default.Dir))
+            {
+                dlg.InitialDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            }
+            else
+            {
+                dlg.InitialDirectory = Properties.Settings.Default.Dir;
+            }
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                MessageBox.Show(dlg.FileName.ToString());
+            }
+        }
+
+        private void changeDirToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog dlg = new FolderBrowserDialog();
+            if (String.IsNullOrEmpty(Properties.Settings.Default.Dir))
+            {
+                dlg.SelectedPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            }
+            else
+            {
+                dlg.SelectedPath = Properties.Settings.Default.Dir;
+            }
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                MessageBox.Show(dlg.SelectedPath.ToString(),"New Default Directory");
+                Properties.Settings.Default.Dir = dlg.SelectedPath;
+                Properties.Settings.Default.Save();
+            }
+        }
     }
 }

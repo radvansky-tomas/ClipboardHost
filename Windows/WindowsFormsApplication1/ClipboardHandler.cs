@@ -22,11 +22,13 @@ namespace ClipboardHost
     class ClipboardHandler
     {
         private Socket client;
-        private byte[] data = new byte[1024];
-        private int size = 1024;
+        private byte[] data = new byte[30000];
+        private int size = 6000;
+        private int fileSize = 0;
         public Device device;
         private int localPort = -1;
         private NotifyIcon icon;
+        private String fileName;
 
         public static bool AreEqualIPE(IPEndPoint e1, IPEndPoint e2)
         {
@@ -154,10 +156,47 @@ namespace ClipboardHost
             try
             {
                 Socket remote = (Socket)iar.AsyncState;
+                if (remote == null)
+                {
+                    Console.WriteLine("Error ?");
+                    fileName = null;
+                    _FileStream.Close();
+                    sendMsg("ack");// 'null' being the exception. The client disconnected normally in this case.
+                    return;
+                }
                 int recv = remote.EndReceive(iar);
-                string stringData = Encoding.UTF8.GetString(data, 0, recv);
-                Console.WriteLine(stringData);
-                processData(stringData);
+                if (!String.IsNullOrEmpty(fileName))
+                {
+                    try
+                    {
+                       
+                        _FileStream.Write(data, 0, recv);
+                        Console.WriteLine(_FileStream.Length +"/" + fileSize + "(" + recv +")");
+                        if (_FileStream.Length >= fileSize)
+                        {
+                            Console.WriteLine("Done");
+                            fileName = null;
+                            fileSize = 0;
+                            _FileStream.Close();
+                            sendMsg("ack");
+                            return;
+                        }
+                        else
+                        {
+                            client.BeginReceive(data, 0, size, SocketFlags.Partial, ReceiveData, remote);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                }
+                else
+                {
+                    string stringData = Encoding.UTF8.GetString(data, 0, recv);
+                    Console.WriteLine(stringData);
+                    processData(stringData);
+                }
             }
             catch (Exception ex)
             {
@@ -186,12 +225,44 @@ namespace ClipboardHost
             }
         }
 
+        private FileStream _FileStream;
         void processData(String data)
         {
             if (data!=null)
             {
-                sendMsg("ack");
-              
+                if (data.Contains("e265o00lgI"))
+                {
+                    saveToClipboard(data.Replace("e265o00lgI", ""), false);
+                }
+                else if (data.Contains("0BrvGy1AFC"))
+                {
+                    saveToClipboard(data.Replace("0BrvGy1AFC", ""), true);
+                }
+                else if (data.Contains("1EfsEj5RKW"))
+                {
+                    //save filename
+                    String[] split = data.Split('|');
+                    fileSize = int.Parse(split[1]);
+
+
+                    fileName = split[2];
+                    // Open file for reading
+                    string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                    if (!String.IsNullOrEmpty(Properties.Settings.Default.Dir))
+                    {
+                        path = Properties.Settings.Default.Dir;
+                    }
+                    _FileStream =
+                       new FileStream(path + "\\" + fileName, FileMode.Create,
+                                                FileAccess.Write);
+
+                    sendMsg("ack");
+                    return;
+                }
+                else
+                {
+                    Console.WriteLine(data);
+                }
                 if (Properties.Settings.Default.Mode==1)
                 {
                     //Show baloon
@@ -232,19 +303,7 @@ namespace ClipboardHost
                         }
                     }
                 }
-
-                if (data.Contains("e265o00lgI"))
-                {
-                    saveToClipboard(data.Replace("e265o00lgI", ""),false);
-                }
-                else if (data.Contains("0BrvGy1AFC"))
-                {
-                    saveToClipboard(data.Replace("0BrvGy1AFC", ""), true);
-                }
-                else
-                {
-                    Console.WriteLine(data);
-                }
+                sendMsg("ack");
             }
             else
             {

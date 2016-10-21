@@ -9,17 +9,20 @@ import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.google.common.io.ByteStreams;
 import com.koushikdutta.async.AsyncNetworkSocket;
 import com.koushikdutta.async.AsyncServer;
 import com.koushikdutta.async.AsyncServerSocket;
 import com.koushikdutta.async.AsyncSocket;
 import com.koushikdutta.async.ByteBufferList;
 import com.koushikdutta.async.DataEmitter;
+import com.koushikdutta.async.Util;
 import com.koushikdutta.async.callback.CompletedCallback;
 import com.koushikdutta.async.callback.DataCallback;
 import com.koushikdutta.async.callback.ListenCallback;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -125,6 +128,7 @@ public class NetworkService extends Service
                     }
                 }
             });
+
             Log.i(LOGTAG, "Client socket connected");
             if (mListener!=null) {
                 mListener.TCPStatusChanged(true);
@@ -162,33 +166,28 @@ public class NetworkService extends Service
         }
     }
 
-    public void sendFile(String path) {
+    public void sendFile(final String path,CompletedCallback callback) {
         try {
             File yourFile = new File(path);
             if (yourFile.isFile()) {
-                int size = (int) yourFile.length();
+                final int size = (int) yourFile.length();
                 byte[] bytes = new byte[size];
-                try {
-                    BufferedInputStream buf = new BufferedInputStream(new FileInputStream(yourFile));
-                    buf.read(bytes, 0, bytes.length);
-                    buf.close();
-                    sendData(MessageType.FILE, "filename.exe");
-                    asyncClient.write(new ByteBufferList(bytes));
-                    Log.i(LOGTAG, "File sent: " + path);
-                } catch (FileNotFoundException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+                    sendData(MessageType.FILE, "|" + size + "|" + yourFile.getName());
+                    //BufferedInputStream buf = new BufferedInputStream(new FileInputStream(yourFile));
+                    Util.pump(yourFile,asyncClient,callback);
+            }
+            else
+            {
+                callback.onCompleted(new FileNotFoundException());
             }
         }
         catch (Exception ex)
         {
             ex.printStackTrace();
+            callback.onCompleted(ex);
         }
     }
+
     public void setmListener(TCPStatusListener mListener) {
         this.mListener = mListener;
     }
