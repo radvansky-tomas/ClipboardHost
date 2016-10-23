@@ -35,12 +35,14 @@
             this.modeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.silentToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.normalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.devicesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.changeDirToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.toggleUSBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.onlineIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.offlineIcon = new System.Windows.Forms.NotifyIcon(this.components);
-            this.changeDirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.sendFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -57,11 +59,12 @@
             this.contextMenuStrip1.ImageScalingSize = new System.Drawing.Size(32, 32);
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.modeToolStripMenuItem,
-            this.sendFileToolStripMenuItem,
-            this.changeDirToolStripMenuItem,
+            this.devicesToolStripMenuItem,
+            this.settingsToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
             this.contextMenuStrip1.Size = new System.Drawing.Size(270, 200);
+            this.contextMenuStrip1.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip1_Opening);
             // 
             // modeToolStripMenuItem
             // 
@@ -88,6 +91,35 @@
             this.normalToolStripMenuItem.Text = "Normal";
             this.normalToolStripMenuItem.CheckedChanged += new System.EventHandler(this.normalToolStripMenuItem_CheckedChanged);
             // 
+            // devicesToolStripMenuItem
+            // 
+            this.devicesToolStripMenuItem.Name = "devicesToolStripMenuItem";
+            this.devicesToolStripMenuItem.Size = new System.Drawing.Size(269, 38);
+            this.devicesToolStripMenuItem.Text = "Devices";
+            // 
+            // settingsToolStripMenuItem
+            // 
+            this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.changeDirToolStripMenuItem1,
+            this.toggleUSBToolStripMenuItem});
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(269, 38);
+            this.settingsToolStripMenuItem.Text = "Settings";
+            // 
+            // changeDirToolStripMenuItem1
+            // 
+            this.changeDirToolStripMenuItem1.Name = "changeDirToolStripMenuItem1";
+            this.changeDirToolStripMenuItem1.Size = new System.Drawing.Size(269, 38);
+            this.changeDirToolStripMenuItem1.Text = "Change Dir";
+            this.changeDirToolStripMenuItem1.Click += new System.EventHandler(this.changeDirToolStripMenuItem_Click);
+            // 
+            // toggleUSBToolStripMenuItem
+            // 
+            this.toggleUSBToolStripMenuItem.Name = "toggleUSBToolStripMenuItem";
+            this.toggleUSBToolStripMenuItem.Size = new System.Drawing.Size(269, 38);
+            this.toggleUSBToolStripMenuItem.Text = "Enable USB";
+            this.toggleUSBToolStripMenuItem.Click += new System.EventHandler(this.toggleUSBToolStripMenuItem_Click);
+            // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
@@ -108,20 +140,6 @@
             // 
             this.offlineIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("offlineIcon.Icon")));
             this.offlineIcon.Text = "Online";
-            // 
-            // changeDirToolStripMenuItem
-            // 
-            this.changeDirToolStripMenuItem.Name = "changeDirToolStripMenuItem";
-            this.changeDirToolStripMenuItem.Size = new System.Drawing.Size(269, 38);
-            this.changeDirToolStripMenuItem.Text = "Change Dir";
-            this.changeDirToolStripMenuItem.Click += new System.EventHandler(this.changeDirToolStripMenuItem_Click);
-            // 
-            // sendFileToolStripMenuItem
-            // 
-            this.sendFileToolStripMenuItem.Name = "sendFileToolStripMenuItem";
-            this.sendFileToolStripMenuItem.Size = new System.Drawing.Size(269, 38);
-            this.sendFileToolStripMenuItem.Text = "Send File";
-            this.sendFileToolStripMenuItem.Click += new System.EventHandler(this.sendFileToolStripMenuItem_Click);
             // 
             // Form1
             // 
@@ -154,8 +172,10 @@
         private System.Windows.Forms.ToolStripMenuItem normalToolStripMenuItem;
         private System.Windows.Forms.NotifyIcon onlineIcon;
         private System.Windows.Forms.NotifyIcon offlineIcon;
-        private System.Windows.Forms.ToolStripMenuItem sendFileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem changeDirToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem changeDirToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem toggleUSBToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem devicesToolStripMenuItem;
     }
 }
 

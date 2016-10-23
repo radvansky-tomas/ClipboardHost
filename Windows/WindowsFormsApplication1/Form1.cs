@@ -18,6 +18,7 @@ namespace ClipboardHost
 {
     public partial class Form1 : Form
     {
+        private List<ClipboardHandler> onlineDevices = new List<ClipboardHandler>();
         private AdbHelper adbHelper = AdbHelper.Instance;
         private bool isADBEnabled = false;
 
@@ -39,12 +40,6 @@ namespace ClipboardHost
                         ((ToolStripMenuItem)normalToolStripMenuItem).Checked = true;
                     }
                     break;
-            }
-
-            if (isADBEnabled)
-            {
-                 AndroidDebugBridge.Initialize(true);
-                 AndroidDebugBridge.CreateBridge("adb/adb.exe", true);
             }
         }
 
@@ -71,7 +66,6 @@ namespace ClipboardHost
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
-            List<ClipboardHandler> onlineDevices = new List<ClipboardHandler>();
             while (true)
             {
                 IReadOnlyList<IZeroconfHost> result = ZeroconfResolver.ResolveAsync("_jktest._tcp.local.").Result;
@@ -168,7 +162,7 @@ namespace ClipboardHost
                     onlineIcon.Visible = false;
                     offlineIcon.Visible = true;
                 }
-                    Thread.Sleep(2000);
+                Thread.Sleep(2000);
             }
         }
 
@@ -192,24 +186,6 @@ namespace ClipboardHost
             }
         }
 
-        private void sendFileToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            OpenFileDialog dlg = new OpenFileDialog();
-            dlg.Title = "File to send";
-            if (String.IsNullOrEmpty(Properties.Settings.Default.Dir))
-            {
-                dlg.InitialDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            }
-            else
-            {
-                dlg.InitialDirectory = Properties.Settings.Default.Dir;
-            }
-            if (dlg.ShowDialog() == DialogResult.OK)
-            {
-                MessageBox.Show(dlg.FileName.ToString());
-            }
-        }
-
         private void changeDirToolStripMenuItem_Click(object sender, EventArgs e)
         {
             FolderBrowserDialog dlg = new FolderBrowserDialog();
@@ -223,9 +199,92 @@ namespace ClipboardHost
             }
             if (dlg.ShowDialog() == DialogResult.OK)
             {
-                MessageBox.Show(dlg.SelectedPath.ToString(),"New Default Directory");
+                MessageBox.Show(dlg.SelectedPath.ToString(), "New Default Directory");
                 Properties.Settings.Default.Dir = dlg.SelectedPath;
                 Properties.Settings.Default.Save();
+            }
+        }
+
+        private void toggleUSBToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (isADBEnabled)
+            {
+                try
+                {
+                    AdbHelper.Instance.KillAdb(AndroidDebugBridge.SocketAddress);
+                    isADBEnabled = false;
+                    toggleUSBToolStripMenuItem.Checked = false;
+                    toggleUSBToolStripMenuItem.Text = "Enable USB";
+                }
+                catch
+                {
+
+                }
+            }
+            else
+            {
+                isADBEnabled = true;
+                toggleUSBToolStripMenuItem.Checked = true;
+                AndroidDebugBridge.Initialize(true);
+                AndroidDebugBridge.CreateBridge("adb/adb.exe", true);
+                toggleUSBToolStripMenuItem.Text = "Disable USB";
+            }
+
+        }
+
+        private void contextMenuStrip1_Opening(object sender, CancelEventArgs e)
+        {
+            devicesToolStripMenuItem.DropDownItems.Clear();
+            foreach (ClipboardHandler device in onlineDevices)
+            {
+                try
+                { 
+                ToolStripItem item = devicesToolStripMenuItem.DropDownItems.Add(device.getEndpoint().Address.ToString());
+                item.Click += deviceItemClicked;
+            }
+                catch
+                {
+
+                }
+            }
+        }
+
+        private void deviceItemClicked(object sender, EventArgs e)
+        {
+            //Get proper object instance
+            ToolStripItem item = (ToolStripItem)sender;
+            ClipboardHandler handler = null;
+            foreach (ClipboardHandler device in onlineDevices)
+            {
+                try
+                {
+                    if (device.getEndpoint().Address.ToString() == item.Text)
+                    {
+                        handler = device;
+                        break;
+                    }
+                }
+                catch
+                {
+
+                }
+            }
+            if (handler != null)
+            {
+                OpenFileDialog dlg = new OpenFileDialog();
+                dlg.Title = "File to send";
+                if (String.IsNullOrEmpty(Properties.Settings.Default.Dir))
+                {
+                    dlg.InitialDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                }
+                else
+                {
+                    dlg.InitialDirectory = Properties.Settings.Default.Dir;
+                }
+                if (dlg.ShowDialog() == DialogResult.OK)
+                {
+                    handler.sendFile(dlg.FileName.ToString());
+                }
             }
         }
     }

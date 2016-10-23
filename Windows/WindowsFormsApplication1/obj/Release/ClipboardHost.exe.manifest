@@ -54,14 +54,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ClipboardHost.exe" size="144368">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ClipboardHost.exe" size="147952">
       <assemblyIdentity name="ClipboardHost" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>umT1sOMNuXZak8zF1+9VhprPa55I9O94AAfNaRgFO0c=</dsig:DigestValue>
+        <dsig:DigestValue>9/h2NKndTaPOJGxQagSdP6QZk/5+FH/JsL7riUz/YQA=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -236,13 +236,13 @@
       <dsig:DigestValue>BBxoWbtPx406kD3ZASmM0ez7dba+Bka3SVTNciKApAc=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="ClipboardHost.exe.config" size="1491">
+  <file name="ClipboardHost.exe.config" size="1577">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>28Fv8sqLt9f00AWs1AYTTGfpQpf8vja4nWl95+u5kJY=</dsig:DigestValue>
+      <dsig:DigestValue>/cXQIKwfdWHRwpjofpkyPkmoSBx5gn+EYgpfz34v8Ao=</dsig:DigestValue>
     </hash>
   </file>
 </asmv1:assembly>

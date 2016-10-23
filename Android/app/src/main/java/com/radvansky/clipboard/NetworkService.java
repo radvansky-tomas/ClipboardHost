@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.nsd.NsdManager;
 import android.net.nsd.NsdServiceInfo;
 import android.os.Binder;
+import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 
@@ -20,14 +21,17 @@ import com.koushikdutta.async.Util;
 import com.koushikdutta.async.callback.CompletedCallback;
 import com.koushikdutta.async.callback.DataCallback;
 import com.koushikdutta.async.callback.ListenCallback;
+import com.orhanobut.hawk.Hawk;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.util.Map;
 
@@ -37,15 +41,14 @@ import static com.radvansky.clipboard.Helpers.getLocalIpAddress;
  * Created by tomasradvansky on 08/10/2016.
  */
 
-public class NetworkService extends Service
-{
+public class NetworkService extends Service {
     public static final String LOGTAG = NetworkService.class.getName();
 
-    public enum MessageType
-    {
-        NORMAL (1, "e265o00lgI"),
-        PASTE (2, "0BrvGy1AFC"),
-        FILE (3, "1EfsEj5RKW");
+    public enum MessageType {
+        NORMAL(1, "e265o00lgI"),
+        PASTE(2, "0BrvGy1AFC"),
+        FILE(3, "1EfsEj5RKW"),
+        FILEACK(4, "5WbsEg2OFW");
 
         public int code;
         public String name;
@@ -56,13 +59,15 @@ public class NetworkService extends Service
         }
 
         public static MessageType fromInt(int code) {
-            switch(code) {
+            switch (code) {
                 case 1:
                     return NORMAL;
                 case 2:
                     return PASTE;
                 case 3:
                     return FILE;
+                case 4:
+                    return FILEACK;
             }
 
             // we had some exception handling for this
@@ -73,6 +78,10 @@ public class NetworkService extends Service
         }
     }
 
+    //File Transfer
+    private Long fileSize;
+    private FileChannel channel;
+
     //Service Discovery
     public int DNS_PORT;
     private MyHTTPD server;
@@ -80,12 +89,13 @@ public class NetworkService extends Service
     private NsdServiceInfo serviceInfo;
     //TCP-IP Server
     public int SERVER_PORT;
-    public boolean isUSB=false;
+    public boolean isUSB = false;
     private TCPStatusListener mListener;
     private AsyncServer asyncServer;
     private AsyncNetworkSocket asyncClient;
     // Binder given to clients
     private final IBinder mBinder = new NetworkService.LocalBinder();
+
     /**
      * Class used for the client Binder.  Because we know this service always
      * runs in the same process as its clients, we don't need to deal with IPC.
@@ -100,7 +110,7 @@ public class NetworkService extends Service
     @Override
     public void onCreate() {
         asyncServer = new AsyncServer();
-       SERVER_PORT = Helpers.getAvailablePort();
+        SERVER_PORT = Helpers.getAvailablePort();
         asyncServer.listen(null, SERVER_PORT, listenCallback);
     }
 
@@ -115,7 +125,58 @@ public class NetworkService extends Service
             asyncClient.setDataCallback(new DataCallback() {
                 @Override
                 public void onDataAvailable(DataEmitter emitter, ByteBufferList bb) {
-                    Log.i(LOGTAG, "Data received: " + bb.readString());
+                    if ((channel == null) || (fileSize == null))
+                    {
+                        String msg = bb.readString();
+                        Log.i(LOGTAG, "Data received: " + msg);
+
+                        if (msg.startsWith(MessageType.FILE.name)) {
+                            //Prepare for next data
+                            String[] parsed = msg.split("\\|");
+                            fileSize = Long.parseLong(parsed[1]);
+                            String path = Hawk.get("DefaultPath", Environment.getExternalStorageDirectory().getPath());
+                            File inFile = new File(path + "/" + parsed[2]);
+                            try {
+                                channel = new FileOutputStream(inFile, false).getChannel();
+                                sendData(MessageType.FILEACK, "OK");
+                            }
+                            catch (Exception ex)
+                            {
+                                ex.printStackTrace();
+                                sendData(MessageType.FILEACK, ex.getMessage());
+                            }
+                        }
+                    }
+                    else
+                    {
+                        //File transfer
+                        try
+                        {
+                            //Get default dir
+                            if (channel.size()>=fileSize) {
+                                channel.close();
+                                channel = null;
+                                fileSize = null;
+                                Log.e(LOGTAG, "File transfer completed");
+                            }
+                            else
+                            {
+                                channel.write(bb.getAll());
+                                Log.e(LOGTAG, "Receiving (" + channel.size() + "/" + fileSize + ")");
+                                if (channel.size()>=fileSize) {
+                                    channel.close();
+                                    channel = null;
+                                    fileSize = null;
+                                    Log.e(LOGTAG, "File transfer completed");
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            ex.printStackTrace();
+                        }
+                    }
+
                 }
             });
             asyncClient.setClosedCallback(new CompletedCallback() {
@@ -123,14 +184,14 @@ public class NetworkService extends Service
                 public void onCompleted(Exception ex) {
                     asyncClient = null;
                     Log.i(LOGTAG, "Client socket closed");
-                    if (mListener!=null) {
+                    if (mListener != null) {
                         mListener.TCPStatusChanged(false);
                     }
                 }
             });
 
             Log.i(LOGTAG, "Client socket connected");
-            if (mListener!=null) {
+            if (mListener != null) {
                 mListener.TCPStatusChanged(true);
             }
         }
@@ -139,7 +200,7 @@ public class NetworkService extends Service
         public void onListening(AsyncServerSocket socket) {
             Log.i("CLIENT-PORT", "" + socket.getLocalPort());
             DNS_PORT = Helpers.getAvailablePort();
-            if (mListener!=null) {
+            if (mListener != null) {
                 mListener.TCPStatusChanged(true);
             }
         }
@@ -147,42 +208,36 @@ public class NetworkService extends Service
         @Override
         public void onCompleted(Exception ex) {
             Log.i(LOGTAG, "Server socket closed");
-            if (mListener!=null) {
+            if (mListener != null) {
                 mListener.TCPStatusChanged(false);
             }
         }
     };
 
     // call this method to send data to the client socket
-    public void sendData(MessageType type,String message) {
+    public void sendData(MessageType type, String message) {
         try {
             String composedMessage = type.name + message;
             asyncClient.write(new ByteBufferList(composedMessage.getBytes(Charset.forName("UTF-8"))));
             Log.i(LOGTAG, "Data sent: " + composedMessage);
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    public void sendFile(final String path,CompletedCallback callback) {
+    public void sendFile(final String path, CompletedCallback callback) {
         try {
             File yourFile = new File(path);
             if (yourFile.isFile()) {
                 final int size = (int) yourFile.length();
                 byte[] bytes = new byte[size];
-                    sendData(MessageType.FILE, "|" + size + "|" + yourFile.getName());
-                    //BufferedInputStream buf = new BufferedInputStream(new FileInputStream(yourFile));
-                    Util.pump(yourFile,asyncClient,callback);
-            }
-            else
-            {
+                sendData(MessageType.FILE, "|" + size + "|" + yourFile.getName());
+                //BufferedInputStream buf = new BufferedInputStream(new FileInputStream(yourFile));
+                Util.pump(yourFile, asyncClient, callback);
+            } else {
                 callback.onCompleted(new FileNotFoundException());
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
             callback.onCompleted(ex);
         }
@@ -202,7 +257,7 @@ public class NetworkService extends Service
         if (asyncServer.isRunning()) {
             asyncServer.stop();
         }
-     stopServer();
+        stopServer();
     }
 
     @Override
@@ -211,10 +266,8 @@ public class NetworkService extends Service
     }
 
     public void startServer() {
-        if (server!=null)
-        {
-            if (server.isAlive())
-            {
+        if (server != null) {
+            if (server.isAlive()) {
                 return;
             }
         }
@@ -274,7 +327,7 @@ public class NetworkService extends Service
     }
 
     public void stopServer() {
-        if (server!=null) {
+        if (server != null) {
             if (server.isAlive()) {
                 // unregister the service
                 NsdManager mNsdManager = (NsdManager) this.getApplicationContext().getSystemService(Context.NSD_SERVICE);

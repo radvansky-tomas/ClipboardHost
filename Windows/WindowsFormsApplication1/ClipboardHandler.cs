@@ -29,6 +29,7 @@ namespace ClipboardHost
         private int localPort = -1;
         private NotifyIcon icon;
         private String fileName;
+        private String sendFileName;
 
         public static bool AreEqualIPE(IPEndPoint e1, IPEndPoint e2)
         {
@@ -238,6 +239,23 @@ namespace ClipboardHost
                 {
                     saveToClipboard(data.Replace("0BrvGy1AFC", ""), true);
                 }
+                else if (data.Contains("5WbsEg2OFW"))
+                {
+                    //File ACK
+                    if (sendFileName != null)
+                    {
+                        try
+                        {
+                            client.SendFile(sendFileName);
+                            sendFileName = null;
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine(ex.Message);
+                        }
+                    }
+                    return;
+                }
                 else if (data.Contains("1EfsEj5RKW"))
                 {
                     //save filename
@@ -308,6 +326,23 @@ namespace ClipboardHost
             else
             {
                 Console.WriteLine("Data is null");
+            }
+        }
+
+        public void sendFile(String fileToSend)
+        {
+            try
+            {
+                FileInfo info = new FileInfo(fileToSend);
+                if (info.Exists)
+                {
+                    sendMsg("1EfsEj5RKW|" + info.Length + "|" + info.Name);
+                    sendFileName = fileToSend;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
             }
         }
 

@@ -54,14 +54,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ClipboardHost.exe" size="146928">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ClipboardHost.exe" size="148976">
       <assemblyIdentity name="ClipboardHost" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>w/TUUE8OtcFNh+dLViCwPy32GX2L/bWxB0N/pEb2EQg=</dsig:DigestValue>
+        <dsig:DigestValue>dFCQBSEAf+28wMVuQRb2LXDQcAYYiZLFjw0bwgEc2FA=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
