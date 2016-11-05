@@ -7,8 +7,8 @@ android {
         applicationId "com.radvansky.clipboard"
         minSdkVersion 19
         targetSdkVersion 24
-        versionCode 8
-        versionName "1.9"
+        versionCode 9
+        versionName "2.0"
     }
     applicationVariants.all { variant ->
         variant.resValue "string", "versionName", variant.versionName
@@ -29,7 +29,5 @@ dependencies {
     compile 'com.koushikdutta.async:androidasync:2.+'
     compile 'com.joanzapata.iconify:android-iconify-fontawesome:2.2.2'
     compile 'com.afollestad.material-dialogs:core:0.9.0.2'
-    compile 'com.nononsenseapps:filepicker:3.1.0'
     compile 'com.google.guava:guava:19.0'
-    compile 'com.orhanobut:hawk:2.0.0-Alpha'
 }

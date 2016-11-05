@@ -21,7 +21,6 @@ import com.koushikdutta.async.Util;
 import com.koushikdutta.async.callback.CompletedCallback;
 import com.koushikdutta.async.callback.DataCallback;
 import com.koushikdutta.async.callback.ListenCallback;
-import com.orhanobut.hawk.Hawk;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -46,9 +45,7 @@ public class NetworkService extends Service {
 
     public enum MessageType {
         NORMAL(1, "e265o00lgI"),
-        PASTE(2, "0BrvGy1AFC"),
-        FILE(3, "1EfsEj5RKW"),
-        FILEACK(4, "5WbsEg2OFW");
+        PASTE(2, "0BrvGy1AFC");
 
         public int code;
         public String name;
@@ -64,10 +61,6 @@ public class NetworkService extends Service {
                     return NORMAL;
                 case 2:
                     return PASTE;
-                case 3:
-                    return FILE;
-                case 4:
-                    return FILEACK;
             }
 
             // we had some exception handling for this
@@ -129,70 +122,7 @@ public class NetworkService extends Service {
                     {
                         String msg = bb.readString();
                         Log.i(LOGTAG, "Data received: " + msg);
-
-                        if (msg.startsWith(MessageType.FILE.name)) {
-                            //Prepare for next data
-                            String[] parsed = msg.split("\\|");
-                            fileSize = Long.parseLong(parsed[1]);
-                            String path = Hawk.get("DefaultPath", Environment.getExternalStorageDirectory().getPath());
-                            File inFile = new File(path + "/" + parsed[2]);
-                            try {
-                                channel = new FileOutputStream(inFile, false).getChannel();
-                                sendData(MessageType.FILEACK, "OK");
-
-                                if (mListener != null) {
-                                    mListener.FileTransfer(-1);
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                ex.printStackTrace();
-                                sendData(MessageType.FILEACK, ex.getMessage());
-                            }
-                        }
                     }
-                    else
-                    {
-                        //File transfer
-                        try
-                        {
-                            //Get default dir
-                            if (channel.size()>=fileSize) {
-                                channel.close();
-                                channel = null;
-                                fileSize = null;
-                                Log.e(LOGTAG, "File transfer completed");
-                                if (mListener != null) {
-                                    mListener.FileTransfer(100);
-                                }
-                            }
-                            else
-                            {
-                                channel.write(bb.getAll());
-                                Log.e(LOGTAG, "Receiving (" + channel.size() + "/" + fileSize + ")");
-                                if (channel.size()>=fileSize) {
-                                    channel.close();
-                                    channel = null;
-                                    fileSize = null;
-                                    Log.e(LOGTAG, "File transfer completed");
-                                    if (mListener != null) {
-                                        mListener.FileTransfer(100);
-                                    }
-                                }
-                                else {
-                                    if (mListener != null) {
-                                        float result = (float)channel.size() / (float)fileSize * 100.0f;
-                                        mListener.FileTransfer(Math.round(result));
-                                    }
-                                }
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            ex.printStackTrace();
-                        }
-                    }
-
                 }
             });
             asyncClient.setClosedCallback(new CompletedCallback() {
@@ -245,24 +175,6 @@ public class NetworkService extends Service {
             Log.i(LOGTAG, "Data sent: " + composedMessage);
         } catch (Exception ex) {
             ex.printStackTrace();
-        }
-    }
-
-    public void sendFile(final String path, CompletedCallback callback) {
-        try {
-            File yourFile = new File(path);
-            if (yourFile.isFile()) {
-                final int size = (int) yourFile.length();
-                byte[] bytes = new byte[size];
-                sendData(MessageType.FILE, "|" + size + "|" + yourFile.getName());
-                //BufferedInputStream buf = new BufferedInputStream(new FileInputStream(yourFile))
-                Util.pump(yourFile, asyncClient, callback);
-            } else {
-                callback.onCompleted(new FileNotFoundException());
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            callback.onCompleted(ex);
         }
     }
 

@@ -238,52 +238,12 @@ namespace ClipboardHost
             foreach (ClipboardHandler device in onlineDevices)
             {
                 try
-                { 
-                ToolStripItem item = devicesToolStripMenuItem.DropDownItems.Add(device.getEndpoint().Address.ToString());
-                item.Click += deviceItemClicked;
-            }
-                catch
                 {
-
-                }
-            }
-        }
-
-        private void deviceItemClicked(object sender, EventArgs e)
-        {
-            //Get proper object instance
-            ToolStripItem item = (ToolStripItem)sender;
-            ClipboardHandler handler = null;
-            foreach (ClipboardHandler device in onlineDevices)
-            {
-                try
-                {
-                    if (device.getEndpoint().Address.ToString() == item.Text)
-                    {
-                        handler = device;
-                        break;
-                    }
+                    ToolStripItem item = devicesToolStripMenuItem.DropDownItems.Add(device.getEndpoint().Address.ToString());
                 }
                 catch
                 {
 
-                }
-            }
-            if (handler != null)
-            {
-                OpenFileDialog dlg = new OpenFileDialog();
-                dlg.Title = "File to send";
-                if (String.IsNullOrEmpty(Properties.Settings.Default.Dir))
-                {
-                    dlg.InitialDirectory = System.Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                }
-                else
-                {
-                    dlg.InitialDirectory = Properties.Settings.Default.Dir;
-                }
-                if (dlg.ShowDialog() == DialogResult.OK)
-                {
-                    handler.sendFile(dlg.FileName.ToString());
                 }
             }
         }

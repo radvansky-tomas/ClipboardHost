@@ -24,13 +24,9 @@ namespace ClipboardHost
         private Socket client;
         private byte[] data = new byte[30000];
         private int size = 6000;
-        private int fileSize = 0;
         public Device device;
         private int localPort = -1;
         private NotifyIcon icon;
-        private String fileName;
-        private String sendFileName;
-        ProgressForm progressDialog = new ProgressForm();
 
         public static bool AreEqualIPE(IPEndPoint e1, IPEndPoint e2)
         {
@@ -158,51 +154,12 @@ namespace ClipboardHost
             try
             {
                 Socket remote = (Socket)iar.AsyncState;
-                if (remote == null)
-                {
-                    Console.WriteLine("Error ?");
-                    progressDialog.Finish();
-                    fileName = null;
-                    _FileStream.Close();
-                    sendMsg("ack");// 'null' being the exception. The client disconnected normally in this case.
-                    return;
-                }
                 int recv = remote.EndReceive(iar);
-                if (!String.IsNullOrEmpty(fileName))
-                {
-                    try
-                    {
-                       
-                        _FileStream.Write(data, 0, recv);
-                        Double result = Convert.ToDouble(_FileStream.Length) / Convert.ToDouble(fileSize) * 100.0;
-                        Console.WriteLine(_FileStream.Length + "/" + fileSize + "(" + recv + ")" + " " + result);
-                        progressDialog.ReportProgress(Convert.ToInt32(result));
-                        if (_FileStream.Length >= fileSize)
-                        {
-                            Console.WriteLine("Done");
-                           progressDialog.Finish();
-                            fileName = null;
-                            fileSize = 0;
-                            _FileStream.Close();
-                            sendMsg("ack");
-                            return;
-                        }
-                        else
-                        {
-                            client.BeginReceive(data, 0, size, SocketFlags.Partial, ReceiveData, remote);
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
-                    }
-                }
-                else
-                {
+              
                     string stringData = Encoding.UTF8.GetString(data, 0, recv);
                     Console.WriteLine(stringData);
                     processData(stringData);
-                }
+               
             }
             catch (Exception ex)
             {
@@ -244,59 +201,11 @@ namespace ClipboardHost
                 {
                     saveToClipboard(data.Replace("0BrvGy1AFC", ""), true);
                 }
-                else if (data.Contains("5WbsEg2OFW"))
-                {
-                    //File ACK
-                    if (sendFileName != null)
-                    {
-                        try
-                        {
-                            client.SendFile(sendFileName);
-                            sendFileName = null;
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine(ex.Message);
-                        }
-                    }
-                    return;
-                }
-                else if (data.Contains("1EfsEj5RKW"))
-                {
-                    //save filename
-                    String[] split = data.Split('|');
-                    fileSize = int.Parse(split[1]);
-
-
-                    fileName = split[2];
-                    // Open file for reading
-                    string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                    if (!String.IsNullOrEmpty(Properties.Settings.Default.Dir))
-                    {
-                        path = Properties.Settings.Default.Dir;
-                    }
-                    _FileStream =
-                       new FileStream(path + "\\" + fileName, FileMode.Create,
-                                                FileAccess.Write);
-
-                    sendMsg("ack");
-                    //Create progress dialog
-                    if (progressDialog.ShowDialog()==DialogResult.Cancel)
-                        {
-                        //Should cancel download
-                        Console.WriteLine("Should cancel");
-                        client.Disconnect(false);
-                        String tmp = fileName;
-                        fileName = null;
-                        _FileStream.Close();
-                        File.Delete(tmp);
-                    }
-                    return;
-                }
                 else
                 {
                     Console.WriteLine(data);
                 }
+
                 if (Properties.Settings.Default.Mode==1)
                 {
                     //Show baloon
@@ -345,28 +254,6 @@ namespace ClipboardHost
             }
         }
 
-        public void sendFile(String fileToSend)
-        {
-            try
-            {
-                FileInfo info = new FileInfo(fileToSend);
-                if (info.Exists)
-                {
-                    sendMsg("1EfsEj5RKW|" + info.Length + "|" + info.Name);
-                    sendFileName = fileToSend;
-                    if (icon != null)
-                    {
-                        icon.BalloonTipText = info.Name;
-                        icon.BalloonTipTitle = "File Upload";
-                        icon.ShowBalloonTip(500);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-        }
 
         private void saveToClipboard(String data, bool enter)
         {

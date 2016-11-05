@@ -140,18 +140,9 @@
     </Compile>
     <Compile Include="Message.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="ProgressForm.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ProgressForm.Designer.cs">
-      <DependentUpon>ProgressForm.cs</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ProgressForm.resx">
-      <DependentUpon>ProgressForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

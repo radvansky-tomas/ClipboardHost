@@ -24,8 +24,6 @@ import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.nononsenseapps.filepicker.FilePickerActivity;
-import com.orhanobut.hawk.Hawk;
 
 import java.io.Console;
 import java.io.File;
@@ -158,7 +156,7 @@ public class MainActivityFragment extends Fragment {
 
     public void openFile(String fileName) {
         try {
-            String path = Hawk.get("DefaultPath", Environment.getExternalStorageDirectory().getPath());
+            String path = Environment.getExternalStorageDirectory().getPath();
             currentFile = new File(path, fileName);
             clipText.setText(Helpers.getStringFromFile(currentFile.getPath()));
             ((MainActivity)getActivity()).getSupportActionBar().setTitle(fileName);
@@ -178,7 +176,7 @@ public class MainActivityFragment extends Fragment {
                             @Override
                             public void onInput(MaterialDialog dialog, CharSequence input) {
                                 // Do something
-                                String path = Hawk.get("DefaultPath", Environment.getExternalStorageDirectory().getPath());
+                                String path =  Environment.getExternalStorageDirectory().getPath();
                                 currentFile = new File(path,input.toString());
                                 if (!currentFile.exists()) {
                                     saveDataFile(clipText.getText().toString(), currentFile);
@@ -438,7 +436,7 @@ public class MainActivityFragment extends Fragment {
                                 @Override
                                 public void onInput(MaterialDialog dialog, CharSequence input) {
                                     // Do something
-                                    String path = Hawk.get("DefaultPath", Environment.getExternalStorageDirectory().getPath());
+                                    String path = Environment.getExternalStorageDirectory().getPath();
                                     currentFile = new File(path,input.toString());
                                     if (!currentFile.exists()) {
                                         saveDataFile(clipText.getText().toString(), currentFile);
@@ -500,50 +498,6 @@ public class MainActivityFragment extends Fragment {
                             .show();
                 }
                 return  true;
-            }
-
-            case R.id.action_file:;
-            {
-                // This always works
-                Intent i = new Intent(getContext(), FilePickerActivity.class);
-                // This works if you defined the intent filter
-                // Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-
-                // Set these depending on your use case. These are the defaults.
-                i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
-                i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, false);
-                i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_FILE);
-
-                // Configure initial directory by specifying a String.
-                // You could specify a String like "/storage/emulated/0/", but that can
-                // dangerous. Always use Android's API calls to get paths to the SD-card or
-                // internal memory.
-                i.putExtra(FilePickerActivity.EXTRA_START_PATH, Environment.getExternalStorageDirectory().getPath());
-
-                getActivity().startActivityForResult(i, 100);
-                return true;
-            }
-
-            case R.id.action_dir:;
-            {
-                // This always works
-                Intent i = new Intent(getContext(), FilePickerActivity.class);
-                // This works if you defined the intent filter
-                // Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-
-                // Set these depending on your use case. These are the defaults.
-                i.putExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false);
-                i.putExtra(FilePickerActivity.EXTRA_ALLOW_CREATE_DIR, true);
-                i.putExtra(FilePickerActivity.EXTRA_MODE, FilePickerActivity.MODE_DIR);
-
-                // Configure initial directory by specifying a String.
-                // You could specify a String like "/storage/emulated/0/", but that can
-                // dangerous. Always use Android's API calls to get paths to the SD-card or
-                // internal memory.
-                i.putExtra(FilePickerActivity.EXTRA_START_PATH, Environment.getExternalStorageDirectory().getPath());
-
-                getActivity().startActivityForResult(i, 200);
-                return true;
             }
         }
 

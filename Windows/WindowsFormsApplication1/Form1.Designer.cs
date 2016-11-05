@@ -37,7 +37,6 @@
             this.normalToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.devicesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.changeDirToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toggleUSBToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
@@ -100,18 +99,10 @@
             // settingsToolStripMenuItem
             // 
             this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.changeDirToolStripMenuItem1,
             this.toggleUSBToolStripMenuItem});
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
             this.settingsToolStripMenuItem.Size = new System.Drawing.Size(269, 38);
             this.settingsToolStripMenuItem.Text = "Settings";
-            // 
-            // changeDirToolStripMenuItem1
-            // 
-            this.changeDirToolStripMenuItem1.Name = "changeDirToolStripMenuItem1";
-            this.changeDirToolStripMenuItem1.Size = new System.Drawing.Size(269, 38);
-            this.changeDirToolStripMenuItem1.Text = "Change Dir";
-            this.changeDirToolStripMenuItem1.Click += new System.EventHandler(this.changeDirToolStripMenuItem_Click);
             // 
             // toggleUSBToolStripMenuItem
             // 
@@ -173,7 +164,6 @@
         private System.Windows.Forms.NotifyIcon onlineIcon;
         private System.Windows.Forms.NotifyIcon offlineIcon;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem changeDirToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem toggleUSBToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem devicesToolStripMenuItem;
     }

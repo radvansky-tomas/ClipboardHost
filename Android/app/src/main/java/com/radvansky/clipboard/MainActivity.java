@@ -32,8 +32,6 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.FontAwesomeIcons;
 import com.koushikdutta.async.callback.CompletedCallback;
-import com.nononsenseapps.filepicker.FilePickerActivity;
-import com.orhanobut.hawk.Hawk;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -93,44 +91,6 @@ public class MainActivity extends AppCompatActivity implements TCPStatusListener
         });
     }
 
-     MaterialDialog downloadDiagog;
-    @Override
-    public void FileTransfer(final int progress) {
-        this.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (progress == 100)
-                {
-                    if (downloadDiagog!=null) {
-                        downloadDiagog.dismiss();
-                    }
-                }
-                else
-                {
-                    if (progress == -1)
-                    {
-                        downloadDiagog = new MaterialDialog.Builder(MainActivity.this)
-                                .title("File Download")
-                                .progress(false, 100)
-                                .content("Downloading...")
-                                .negativeText("Cancel")
-                                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                                    @Override
-                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                        mNetworkService.restartConnection();
-                                    }
-                                })
-                                .show();
-                    }
-                    else
-                    {
-                        downloadDiagog.setProgress(progress);
-                    }
-                }
-            }
-        });
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -153,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements TCPStatusListener
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
                 //get current directory
-                String path = Hawk.get("DefaultPath", Environment.getExternalStorageDirectory().getPath());
+                String path =  Environment.getExternalStorageDirectory().getPath();
                 //Check online status
                 filesMenu.clear();
                 List<File> currentFiles = Helpers.getListFiles(new File(path));
@@ -280,69 +240,6 @@ public class MainActivity extends AppCompatActivity implements TCPStatusListener
     protected void onPause() {
         Log.d(TAG, "onPause");
         super.onPause();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 100 && resultCode == Activity.RESULT_OK) {
-            if (data.getBooleanExtra(FilePickerActivity.EXTRA_ALLOW_MULTIPLE, false)) {
-                // For JellyBean and above
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    ClipData clip = data.getClipData();
-
-                    if (clip != null) {
-                        for (int i = 0; i < clip.getItemCount(); i++) {
-                            Uri uri = clip.getItemAt(i).getUri();
-                            // Do something with the URI
-                        }
-                    }
-                    // For Ice Cream Sandwich
-                } else {
-                    ArrayList<String> paths = data.getStringArrayListExtra
-                            (FilePickerActivity.EXTRA_PATHS);
-
-                    if (paths != null) {
-                        for (String path : paths) {
-                            Uri uri = Uri.parse(path);
-                            // Do something with the URI
-                        }
-                    }
-                }
-
-            } else {
-                final Uri uri = data.getData();
-                // Do something with the URI
-                final MaterialDialog dialog =  new MaterialDialog.Builder(this)
-                        .title("File Upload")
-                        .content("Uploading...")
-                        .progress(true, 0)
-                        .show();
-                mNetworkService.sendFile(uri.getPath(), new CompletedCallback() {
-                    @Override
-                    public void onCompleted(final Exception ex) {
-                        dialog.dismiss();
-                        handler.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (ex == null) {
-                                    Toast.makeText(MainActivity.this, "File: '" + uri.getLastPathSegment() + "' + has been sent", Toast.LENGTH_LONG).show();
-                                }
-                            }});
-                      }
-                });
-            }
-        } else if (requestCode == 200 && resultCode == Activity.RESULT_OK) {
-                final Uri uri = data.getData();
-                // Do something with the URI
-                Hawk.put("DefaultPath",uri.getPath());
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(MainActivity.this, "New Default Directory: '" + uri.getPath() + "'", Toast.LENGTH_LONG).show();
-                    }
-                });
-        }
     }
 }
 

@@ -6,5 +6,4 @@ package com.radvansky.clipboard;
 
 public interface TCPStatusListener {
     public void TCPStatusChanged(boolean isOnline);
-    public void FileTransfer(int progress);
 }
