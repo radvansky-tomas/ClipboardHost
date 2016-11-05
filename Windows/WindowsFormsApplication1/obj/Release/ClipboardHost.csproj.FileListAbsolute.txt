@@ -79,3 +79,4 @@ C:\Users\Tomasko\Documents\ClipboardHost\Windows\WindowsFormsApplication1\obj\Re
 C:\Users\Tomasko\Documents\ClipboardHost\Windows\WindowsFormsApplication1\obj\Release\ClipboardHost.csproj.GenerateResource.Cache
 C:\Users\Tomasko\Documents\ClipboardHost\Windows\WindowsFormsApplication1\obj\Release\ClipboardHost.exe.manifest
 C:\Users\Tomasko\Documents\ClipboardHost\Windows\WindowsFormsApplication1\obj\Release\ClipboardHost.application
+C:\Users\Tomasko\Documents\ClipboardHost\Windows\WindowsFormsApplication1\obj\Release\ClipboardHost.ProgressForm.resources

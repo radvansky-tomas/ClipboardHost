@@ -30,6 +30,7 @@ namespace ClipboardHost
         private NotifyIcon icon;
         private String fileName;
         private String sendFileName;
+        ProgressForm progressDialog = new ProgressForm();
 
         public static bool AreEqualIPE(IPEndPoint e1, IPEndPoint e2)
         {
@@ -160,6 +161,7 @@ namespace ClipboardHost
                 if (remote == null)
                 {
                     Console.WriteLine("Error ?");
+                    progressDialog.Finish();
                     fileName = null;
                     _FileStream.Close();
                     sendMsg("ack");// 'null' being the exception. The client disconnected normally in this case.
@@ -172,10 +174,13 @@ namespace ClipboardHost
                     {
                        
                         _FileStream.Write(data, 0, recv);
-                        Console.WriteLine(_FileStream.Length +"/" + fileSize + "(" + recv +")");
+                        Double result = Convert.ToDouble(_FileStream.Length) / Convert.ToDouble(fileSize) * 100.0;
+                        Console.WriteLine(_FileStream.Length + "/" + fileSize + "(" + recv + ")" + " " + result);
+                        progressDialog.ReportProgress(Convert.ToInt32(result));
                         if (_FileStream.Length >= fileSize)
                         {
                             Console.WriteLine("Done");
+                           progressDialog.Finish();
                             fileName = null;
                             fileSize = 0;
                             _FileStream.Close();
@@ -275,6 +280,17 @@ namespace ClipboardHost
                                                 FileAccess.Write);
 
                     sendMsg("ack");
+                    //Create progress dialog
+                    if (progressDialog.ShowDialog()==DialogResult.Cancel)
+                        {
+                        //Should cancel download
+                        Console.WriteLine("Should cancel");
+                        client.Disconnect(false);
+                        String tmp = fileName;
+                        fileName = null;
+                        _FileStream.Close();
+                        File.Delete(tmp);
+                    }
                     return;
                 }
                 else
@@ -338,6 +354,12 @@ namespace ClipboardHost
                 {
                     sendMsg("1EfsEj5RKW|" + info.Length + "|" + info.Name);
                     sendFileName = fileToSend;
+                    if (icon != null)
+                    {
+                        icon.BalloonTipText = info.Name;
+                        icon.BalloonTipTitle = "File Upload";
+                        icon.ShowBalloonTip(500);
+                    }
                 }
             }
             catch (Exception ex)

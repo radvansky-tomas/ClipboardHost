@@ -158,7 +158,8 @@ public class MainActivityFragment extends Fragment {
 
     public void openFile(String fileName) {
         try {
-            currentFile = new File(getActivity().getFilesDir(), fileName);
+            String path = Hawk.get("DefaultPath", Environment.getExternalStorageDirectory().getPath());
+            currentFile = new File(path, fileName);
             clipText.setText(Helpers.getStringFromFile(currentFile.getPath()));
             ((MainActivity)getActivity()).getSupportActionBar().setTitle(fileName);
         } catch (Exception ex) {
@@ -177,7 +178,8 @@ public class MainActivityFragment extends Fragment {
                             @Override
                             public void onInput(MaterialDialog dialog, CharSequence input) {
                                 // Do something
-                                currentFile = new File(getActivity().getFilesDir(),input.toString());
+                                String path = Hawk.get("DefaultPath", Environment.getExternalStorageDirectory().getPath());
+                                currentFile = new File(path,input.toString());
                                 if (!currentFile.exists()) {
                                     saveDataFile(clipText.getText().toString(), currentFile);
                                 }
@@ -436,7 +438,8 @@ public class MainActivityFragment extends Fragment {
                                 @Override
                                 public void onInput(MaterialDialog dialog, CharSequence input) {
                                     // Do something
-                                    currentFile = new File(getActivity().getFilesDir(),input.toString());
+                                    String path = Hawk.get("DefaultPath", Environment.getExternalStorageDirectory().getPath());
+                                    currentFile = new File(path,input.toString());
                                     if (!currentFile.exists()) {
                                         saveDataFile(clipText.getText().toString(), currentFile);
                                     }

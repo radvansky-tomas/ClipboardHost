@@ -9,8 +9,10 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -25,6 +27,7 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.joanzapata.iconify.IconDrawable;
 import com.joanzapata.iconify.fonts.FontAwesomeIcons;
@@ -90,6 +93,44 @@ public class MainActivity extends AppCompatActivity implements TCPStatusListener
         });
     }
 
+     MaterialDialog downloadDiagog;
+    @Override
+    public void FileTransfer(final int progress) {
+        this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (progress == 100)
+                {
+                    if (downloadDiagog!=null) {
+                        downloadDiagog.dismiss();
+                    }
+                }
+                else
+                {
+                    if (progress == -1)
+                    {
+                        downloadDiagog = new MaterialDialog.Builder(MainActivity.this)
+                                .title("File Download")
+                                .progress(false, 100)
+                                .content("Downloading...")
+                                .negativeText("Cancel")
+                                .onNegative(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        mNetworkService.restartConnection();
+                                    }
+                                })
+                                .show();
+                    }
+                    else
+                    {
+                        downloadDiagog.setProgress(progress);
+                    }
+                }
+            }
+        });
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -111,14 +152,20 @@ public class MainActivity extends AppCompatActivity implements TCPStatusListener
             /** Called when a drawer has settled in a completely open state. */
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
+                //get current directory
+                String path = Hawk.get("DefaultPath", Environment.getExternalStorageDirectory().getPath());
                 //Check online status
                 filesMenu.clear();
-                List<File> currentFiles = Helpers.getListFiles(MainActivity.this.getFilesDir());
+                List<File> currentFiles = Helpers.getListFiles(new File(path));
                 if (currentFiles.size() == 0) {
                     filesMenu.add("");
                 } else {
                     for (File entry : currentFiles) {
-                        filesMenu.add(entry.getName());
+                        String filenameArray[] = entry.getName().split("\\.");
+                        String extension = filenameArray[filenameArray.length-1];
+                        if (extension.toLowerCase().equals("txt")) {
+                            filesMenu.add(entry.getName());
+                        }
                     }
                 }
             }
@@ -273,14 +320,15 @@ public class MainActivity extends AppCompatActivity implements TCPStatusListener
                         .show();
                 mNetworkService.sendFile(uri.getPath(), new CompletedCallback() {
                     @Override
-                    public void onCompleted(Exception ex) {
+                    public void onCompleted(final Exception ex) {
                         dialog.dismiss();
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(MainActivity.this, "File: '" + uri.getLastPathSegment() + "' + has been sent", Toast.LENGTH_LONG).show();
-                            }
-                        });
+                                if (ex == null) {
+                                    Toast.makeText(MainActivity.this, "File: '" + uri.getLastPathSegment() + "' + has been sent", Toast.LENGTH_LONG).show();
+                                }
+                            }});
                       }
                 });
             }

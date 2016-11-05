@@ -139,6 +139,10 @@ public class NetworkService extends Service {
                             try {
                                 channel = new FileOutputStream(inFile, false).getChannel();
                                 sendData(MessageType.FILEACK, "OK");
+
+                                if (mListener != null) {
+                                    mListener.FileTransfer(-1);
+                                }
                             }
                             catch (Exception ex)
                             {
@@ -158,6 +162,9 @@ public class NetworkService extends Service {
                                 channel = null;
                                 fileSize = null;
                                 Log.e(LOGTAG, "File transfer completed");
+                                if (mListener != null) {
+                                    mListener.FileTransfer(100);
+                                }
                             }
                             else
                             {
@@ -168,6 +175,15 @@ public class NetworkService extends Service {
                                     channel = null;
                                     fileSize = null;
                                     Log.e(LOGTAG, "File transfer completed");
+                                    if (mListener != null) {
+                                        mListener.FileTransfer(100);
+                                    }
+                                }
+                                else {
+                                    if (mListener != null) {
+                                        float result = (float)channel.size() / (float)fileSize * 100.0f;
+                                        mListener.FileTransfer(Math.round(result));
+                                    }
                                 }
                             }
                         }
@@ -214,6 +230,13 @@ public class NetworkService extends Service {
         }
     };
 
+    public void restartConnection()
+    {
+     asyncClient.close();
+        asyncServer.listen(null, SERVER_PORT, listenCallback);
+    }
+
+
     // call this method to send data to the client socket
     public void sendData(MessageType type, String message) {
         try {
@@ -232,7 +255,7 @@ public class NetworkService extends Service {
                 final int size = (int) yourFile.length();
                 byte[] bytes = new byte[size];
                 sendData(MessageType.FILE, "|" + size + "|" + yourFile.getName());
-                //BufferedInputStream buf = new BufferedInputStream(new FileInputStream(yourFile));
+                //BufferedInputStream buf = new BufferedInputStream(new FileInputStream(yourFile))
                 Util.pump(yourFile, asyncClient, callback);
             } else {
                 callback.onCompleted(new FileNotFoundException());
