@@ -3,6 +3,7 @@ package com.radvansky.clipboard;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
@@ -24,6 +25,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -175,6 +177,28 @@ public class MainActivity extends AppCompatActivity implements TCPStatusListener
                 }
             }
         });
+
+        Button enterBtn = (Button)findViewById(R.id.enterBtn);
+        enterBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (isServiceOnline) {
+                    mNetworkService.sendData(NetworkService.MessageType.ENTER, "");
+                    Toast.makeText(MainActivity.this, "Enter key sent", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Host is not connected!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        Button clearBtn = (Button)findViewById(R.id.clearBtn);
+        clearBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new MyClipboardManager().copyToClipboard(MainActivity.this,"");
+                Toast.makeText(MainActivity.this, "Clipboard is empty", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -234,6 +258,9 @@ public class MainActivity extends AppCompatActivity implements TCPStatusListener
                 mNetworkService.stopServer();
             }
         }
+        MainActivityFragment fragment = (MainActivityFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
+        fragment.getFocus();
+
     }
 
     @Override

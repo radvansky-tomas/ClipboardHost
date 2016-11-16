@@ -201,6 +201,11 @@ namespace ClipboardHost
                 {
                     saveToClipboard(data.Replace("0BrvGy1AFC", ""), true);
                 }
+                else if (data.Contains("1FgqIn5IKE"))
+                {
+                    //enter
+                    pasteEnter();
+                }
                 else
                 {
                     Console.WriteLine(data);
@@ -254,6 +259,24 @@ namespace ClipboardHost
             }
         }
 
+        private void pasteEnter()
+        {
+            Thread thread = new Thread(() =>
+            {
+                try
+                {
+                    //Return
+                    InputSimulator.SimulateKeyPress(VirtualKeyCode.RETURN);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            });
+            thread.SetApartmentState(ApartmentState.STA); //Set the thread to STA
+            thread.Start();
+            thread.Join();
+        }
 
         private void saveToClipboard(String data, bool enter)
         {

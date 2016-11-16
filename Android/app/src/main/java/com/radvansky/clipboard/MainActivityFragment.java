@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -116,6 +118,8 @@ public class MainActivityFragment extends Fragment {
             }
         });
 
+
+
         Button replaceBtn = (Button) view.findViewById(R.id.replaceBtn);
         replaceBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -147,6 +151,18 @@ public class MainActivityFragment extends Fragment {
         return view;
     }
 
+    public void getFocus()
+    {
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                clipText.requestFocus();
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.showSoftInput(clipText, InputMethodManager.SHOW_IMPLICIT);
+            }
+        },500);
+    }
 
     public void createNewFile() {
         clipText.setText("");

@@ -45,7 +45,8 @@ public class NetworkService extends Service {
 
     public enum MessageType {
         NORMAL(1, "e265o00lgI"),
-        PASTE(2, "0BrvGy1AFC");
+        PASTE(2, "0BrvGy1AFC"),
+        ENTER(3, "1FgqIn5IKE");
 
         public int code;
         public String name;
@@ -61,6 +62,8 @@ public class NetworkService extends Service {
                     return NORMAL;
                 case 2:
                     return PASTE;
+                case 3:
+                    return ENTER;
             }
 
             // we had some exception handling for this
